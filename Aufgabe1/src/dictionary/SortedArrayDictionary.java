@@ -4,9 +4,9 @@ import java.util.Iterator;
 
 public class SortedArrayDictionary<K extends Comparable<? super K>, V> implements Dictionary<K, V> {
 
+    private static final int DEF_CAPACITY = 32; //Maximale Kapazität des Feldes
     private Entry<K, V>[] dict; //ist nach dem  key sortiert
     private int size; //gibt die Länge des Feldes an
-    private static final int DEF_CAPACITY = 32; //Maximale Kapazität des Feldes
 
     public SortedArrayDictionary() {
         this.dict = new Entry[DEF_CAPACITY];
@@ -78,6 +78,7 @@ public class SortedArrayDictionary<K extends Comparable<? super K>, V> implement
      * Removes the key-value-pair associated with the key.
      * Returns the value to which the key was previously associated,
      * or null if the key is not contained in the dictionary.
+     *
      * @param key key whose mapping is to be removed from the map.
      * @return the previous value associated with key, or null if there was no mapping for key.
      */

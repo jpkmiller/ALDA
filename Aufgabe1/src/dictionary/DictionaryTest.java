@@ -8,34 +8,35 @@ package dictionary;
 
 /**
  * Static test methods for different Dictionary implementations.
+ *
  * @author oliverbittel
  */
 public class DictionaryTest {
 
-	/**
-	 * @param args not used.
-	 */
-	public static void main(String[] args)  {
+    /**
+     * @param args not used.
+     */
+    public static void main(String[] args) {
 
-		//testSortedArrayDictionary();
-		//testHashDictionary();
-		//testBinaryTreeDictionary();
-	}
+        //testSortedArrayDictionary();
+        //testHashDictionary();
+        //testBinaryTreeDictionary();
+    }
 
-	private static void testSortedArrayDictionary() {
-		Dictionary<String, String> dict = new SortedArrayDictionary<>();
-		testDict(dict);
-	}
+    private static void testSortedArrayDictionary() {
+        Dictionary<String, String> dict = new SortedArrayDictionary<>();
+        testDict(dict);
+    }
 
-	private static void testHashDictionary() {
-		Dictionary<String, String> dict = new HashDictionary<>(3);
-		testDict(dict);
-	}
+    private static void testHashDictionary() {
+        Dictionary<String, String> dict = new HashDictionary<>(3);
+        testDict(dict);
+    }
 
-	private static void testBinaryTreeDictionary() {
-		Dictionary<String, String> dict = new BinaryTreeDictionary<>();
-		testDict(dict);
-        
+    private static void testBinaryTreeDictionary() {
+        Dictionary<String, String> dict = new BinaryTreeDictionary<>();
+        testDict(dict);
+
         // Test für BinaryTreeDictionary mit prettyPrint 
         // (siehe Aufgabe 10; Programmiertechnik 2).
         // Pruefen Sie die Ausgabe von prettyPrint auf Papier nach.
@@ -77,35 +78,35 @@ public class DictionaryTest {
     }
 
     private static void testDict(Dictionary<String, String> dict) {
-		System.out.println("===== New Test Case ========================");
-		System.out.println("test " + dict.getClass());
-		System.out.println(dict.insert("gehen", "go") == null);		// true
-		String s = "gehen";
-		System.out.println(dict.search(s) != null);					// true
-		System.out.println(dict.search(s).equals("go"));			// true
-		System.out.println(dict.insert(s, "walk").equals("go"));	// true
-		System.out.println(dict.search("gehen").equals("walk"));	// true
-		System.out.println(dict.remove("gehen").equals("walk"));	// true
-		System.out.println(dict.remove("gehen") == null);			// true
-		dict.insert("starten", "start");
-		dict.insert("gehen", "go");
-		dict.insert("schreiben", "write");
-		dict.insert("reden", "say");
-		dict.insert("arbeiten", "work");
-		dict.insert("lesen", "read");
-		dict.insert("singen", "sing");
-		dict.insert("schwimmen", "swim");
-		dict.insert("rennen", "run");
-		dict.insert("beten", "pray");
-		dict.insert("tanzen", "dance");
-		dict.insert("schreien", "cry");
-		dict.insert("tauchen", "dive");
-		dict.insert("fahren", "drive");
-		dict.insert("spielen", "play");
-		dict.insert("planen", "plan");
-		for (Dictionary.Entry<String, String> e : dict) {
-			System.out.println(e.getKey() + ": " + e.getValue() + " search: " + dict.search(e.getKey()));
-		}
-	}
-	
+        System.out.println("===== New Test Case ========================");
+        System.out.println("test " + dict.getClass());
+        System.out.println(dict.insert("gehen", "go") == null);        // true
+        String s = "gehen";
+        System.out.println(dict.search(s) != null);                    // true
+        System.out.println(dict.search(s).equals("go"));            // true
+        System.out.println(dict.insert(s, "walk").equals("go"));    // true
+        System.out.println(dict.search("gehen").equals("walk"));    // true
+        System.out.println(dict.remove("gehen").equals("walk"));    // true
+        System.out.println(dict.remove("gehen") == null);            // true
+        dict.insert("starten", "start");
+        dict.insert("gehen", "go");
+        dict.insert("schreiben", "write");
+        dict.insert("reden", "say");
+        dict.insert("arbeiten", "work");
+        dict.insert("lesen", "read");
+        dict.insert("singen", "sing");
+        dict.insert("schwimmen", "swim");
+        dict.insert("rennen", "run");
+        dict.insert("beten", "pray");
+        dict.insert("tanzen", "dance");
+        dict.insert("schreien", "cry");
+        dict.insert("tauchen", "dive");
+        dict.insert("fahren", "drive");
+        dict.insert("spielen", "play");
+        dict.insert("planen", "plan");
+        for (Dictionary.Entry<String, String> e : dict) {
+            System.out.println(e.getKey() + ": " + e.getValue() + " search: " + dict.search(e.getKey()));
+        }
+    }
+
 }

@@ -38,6 +38,7 @@ public class HashDictionary<K extends Comparable<? super K>, V> implements Dicti
         //System.out.printf("TabellenNr. %d%n", adr % (dict.length - 1));
         return adr % (dict.length - 1);
     }
+
     /**
      * Associates the specified value with the specified key in this map.
      * If the map previously contained a mapping for the key,
@@ -93,15 +94,16 @@ public class HashDictionary<K extends Comparable<? super K>, V> implements Dicti
             load = load * 2;
             backup = new HashDictionary<>(7);
 
-            Iterator<Entry<K,V>> it = iterator();
+            Iterator<Entry<K, V>> it = iterator();
             while (it.hasNext()) {
-                Entry<K,V> e = it.next();
-                backup.insert(e.getKey(),e.getValue());
+                Entry<K, V> e = it.next();
+                backup.insert(e.getKey(), e.getValue());
             }
 
             dict = backup.dict;
         }
     }
+
     /**
      * Removes the key-vaue-pair associated with the key.
      * Returns the value to which the key was previously associated,
