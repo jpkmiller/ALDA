@@ -3,59 +3,68 @@ package dictionary;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DictionaryUI {
 
     static Dictionary<String, String> dic;
+    static final Scanner EINGABE = new Scanner(System.in);
 
     public static void main(String[] args) {
-        handler(args);
+        handler();
     }
 
-    private static void handler(String[] arg) {
-        for (int i = 0; i < arg.length; i++) {
-            switch (arg[i]) {
+    private static void handler() {
+        String in;
+        while (EINGABE.hasNext()) {
+            in = EINGABE.next();
+            switch (in) {
                 case "create":
-                    if (arg[i + 1].equals("hash"))
+                    if (EINGABE.hasNext() && EINGABE.next().equals("hash"))
                         create(new HashDictionary(3));
                     else
                         create(new SortedArrayDictionary());
                     break;
                 case "read":
-                    if (arg[i + 1].matches("d+"))
-                        read(Integer.parseInt(arg[i + 1]), arg[i + 2]);
-                    else read(arg[i + 1]);
+                    if (EINGABE.hasNextInt()) {
+                        read(EINGABE.nextInt(), EINGABE.next());
+                    }
+                        read(EINGABE.next());
                     break;
                 case "p":
                     print();
                     break;
                 case "s":
-                    search(arg[i + 1]);
+                    search(EINGABE.next());
                     break;
                 case "i":
-                    insert(arg[i + 1], arg[i + 2]);
+                    insert(EINGABE.next(), EINGABE.next());
                     break;
                 case "r":
-                    remove(arg[i + 1]);
+                    remove(EINGABE.next());
                     break;
                 case "exit":
                     exit();
                     break;
+                default:
             }
+
         }
     }
 
+    private static void read(String next) {
+        read(-1, next);
+    }
+
     private static void create(Dictionary dic) {
+        System.out.println("Creating Dictionary");
         DictionaryUI.dic = dic;
     }
 
-    private static void read(String f) {
-        read(-1, f);
-    }
-
     private static void read(int n, String f) {
+        System.out.println("Reading Dictionary");
         LineNumberReader in;
         try {
             in = new LineNumberReader(new FileReader(f));
@@ -78,24 +87,29 @@ public class DictionaryUI {
     }
 
     private static void print() {
+        System.out.println("Printing Dictionary");
         for (Dictionary.Entry<String, String> e : dic) {
             System.out.println(e.getKey() + ": " + e.getValue());
         }
     }
 
     private static void search(String key) {
+        System.out.println("Searching for " + key);
         dic.search(key);
     }
 
     private static void insert(String key, String value) {
+        System.out.println("Inserting " + key + " and " + value);
         dic.insert(key, value);
     }
 
     private static void remove(String key) {
+        System.out.println("Removing " +  key);
         dic.remove(key);
     }
 
     private static void exit() {
+        System.out.println("Bye");
         System.exit(0);
     }
 }
