@@ -7,43 +7,43 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 public class DictionaryUI {
 
-    static Dictionary<String, String> dic;
-    static final Scanner EINGABE = new Scanner(System.in);
+    private static final Scanner EINGABE = new Scanner(System.in);
 
     public static void main(String[] args) {
         handler();
     }
 
     private static void handler() {
+        Dictionary dic = null;
         String in;
         while (EINGABE.hasNext()) {
             in = EINGABE.next();
             switch (in) {
                 case "create":
                     if (EINGABE.hasNext() && EINGABE.next().equals("hash"))
-                        create(new HashDictionary(3));
+                        dic = create(1);
                     else
-                        create(new SortedArrayDictionary());
+                        dic = create(0);
                     break;
                 case "read":
-                    if (EINGABE.hasNextInt()) {
-                        read(EINGABE.nextInt(), EINGABE.next());
-                    }
-                        read(EINGABE.next());
+                    if (EINGABE.hasNextInt())
+                        dic = read(EINGABE.nextInt(), EINGABE.next(), dic);
+                    read(EINGABE.next(), dic);
                     break;
                 case "p":
-                    print();
+                    print(dic);
                     break;
                 case "s":
-                    search(EINGABE.next());
+                    search(EINGABE.next(), dic);
                     break;
                 case "i":
-                    insert(EINGABE.next(), EINGABE.next());
+                    insert(EINGABE.next(), EINGABE.next(), dic);
                     break;
                 case "r":
-                    remove(EINGABE.next());
+                    remove(EINGABE.next(), dic);
                     break;
                 case "exit":
                     exit();
@@ -54,56 +54,61 @@ public class DictionaryUI {
         }
     }
 
-    private static void read(String next) {
-        read(-1, next);
-    }
-
-    private static void create(Dictionary dic) {
+    private static Dictionary create(int i) {
         System.out.println("Creating Dictionary");
-        DictionaryUI.dic = dic;
+        if (i == 1)
+            return new HashDictionary(3, 31);
+        else
+            return new SortedArrayDictionary();
     }
 
-    private static void read(int n, String f) {
+    private static void read(String next, Dictionary<String, String> dic) {
+            read(-1, next, dic);
+    }
+
+    private static Dictionary<String, String> read(int n, String f, Dictionary<String, String> dic) {
         System.out.println("Reading Dictionary");
-        LineNumberReader in;
+        long start = 0, end = 0;
+        if (dic == null)
+            dic = create(0);
         try {
-            in = new LineNumberReader(new FileReader(f));
+            LineNumberReader in = new LineNumberReader(new FileReader(f));
             String line;
-            int i = 0;
-            while ((line = in.readLine()) != null) {
-                ++i;
+            start = System.currentTimeMillis();
+            for (int i = 0; (line = in.readLine()) != null; ++i) {
                 String[] sf = line.split(" ");
-                DictionaryUI.dic = new SortedArrayDictionary<>();
                 if (n == -1 || n > i)
                     dic.insert(sf[0], sf[1]);
-                else
+                else if (n == i)
                     break;
             }
+            end = System.currentTimeMillis();
             in.close();
         } catch (IOException ex) {
             Logger.getLogger(Dictionary.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        System.out.printf("Measured time %d milliseconds\n", end - start);
+        return dic;
     }
 
-    private static void print() {
+    private static void print(Dictionary<String, String> dic) {
         System.out.println("Printing Dictionary");
-        for (Dictionary.Entry<String, String> e : dic) {
-            System.out.println(e.getKey() + ": " + e.getValue());
-        }
+        for (Dictionary.Entry<String, String> e : dic)
+            System.out.println(e.getKey() + ": " + e.getValue() + " search: " + dic.search(e.getKey()));
+        System.out.println("Finished printing");
     }
 
-    private static void search(String key) {
+    private static void search(String key, Dictionary<String, String> dic) {
         System.out.println("Searching for " + key);
         dic.search(key);
     }
 
-    private static void insert(String key, String value) {
+    private static void insert(String key, String value, Dictionary<String, String> dic) {
         System.out.println("Inserting " + key + " and " + value);
         dic.insert(key, value);
     }
 
-    private static void remove(String key) {
+    private static void remove(String key, Dictionary<String, String> dic) {
         System.out.println("Removing " +  key);
         dic.remove(key);
     }

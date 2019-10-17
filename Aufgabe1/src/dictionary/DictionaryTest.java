@@ -18,8 +18,8 @@ public class DictionaryTest {
      */
     public static void main(String[] args) {
 
-        //testSortedArrayDictionary();
-        //testHashDictionary();
+        testSortedArrayDictionary();
+        testHashDictionary();
         //testBinaryTreeDictionary();
     }
 
@@ -29,7 +29,7 @@ public class DictionaryTest {
     }
 
     private static void testHashDictionary() {
-        Dictionary<String, String> dict = new HashDictionary<>(3);
+        Dictionary<String, String> dict = new HashDictionary<>(3, 31);
         testDict(dict);
     }
 

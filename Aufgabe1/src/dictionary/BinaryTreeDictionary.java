@@ -3,6 +3,7 @@ package dictionary;
 import java.util.Iterator;
 
 public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements Dictionary<K, V> {
+
     /**
      * Associates the specified value with the specified key in this map.
      * If the map previously contained a mapping for the key,
@@ -67,5 +68,15 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
     }
 
     public void prettyPrint() {
+    }
+
+    class Node {
+        Node right;
+        Node left;
+        Entry<K, V> e;
+
+        public Node(Entry<K, V> e) {
+            this.e = e;
+        }
     }
 }
