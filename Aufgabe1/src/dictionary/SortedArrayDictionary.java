@@ -26,6 +26,7 @@ public class SortedArrayDictionary<K extends Comparable<? super K>, V> implement
      */
     @Override
     public V insert(K key, V value) {
+        ensurecapacity();
         for (int i = 0; i < size; i++) {
             if (dict[i].getKey().equals(key)) {
                 V old = dict[i].getValue();
@@ -73,6 +74,14 @@ public class SortedArrayDictionary<K extends Comparable<? super K>, V> implement
         return null;
     }
 
+    void ensurecapacity() {
+        if (dict.length <= this.size()) {
+            System.out.printf("Enlarging array by %d\n", this.size() * 2);
+            Entry[] old = new Entry[this.size() * 2];
+            System.arraycopy(dict, 0, old, 0, dict.length);
+            dict = old;
+        }
+    }
 
     /**
      * Removes the key-value-pair associated with the key.

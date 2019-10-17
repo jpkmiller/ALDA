@@ -7,11 +7,14 @@ public class HashDictionary<K extends Comparable<? super K>, V> implements Dicti
 
     private int key;
     private int size;
-    private int load = 31;
-    LinkedList<Entry<K, V>>[] dict = new LinkedList[load];
+    private int load;
+    LinkedList<Entry<K, V>>[] dict;
 
-    public HashDictionary(int key) {
+    public HashDictionary(int key, int load) {
+        this.dict = new LinkedList[load];
         this.key = key;
+        this.load = load;
+        this.size = 0;
     }
 
     /**
@@ -39,6 +42,20 @@ public class HashDictionary<K extends Comparable<? super K>, V> implements Dicti
         return adr % (dict.length - 1);
     }
 
+    private static boolean isprime(int n) {
+        for (int i = 2; i * i <= n; i++)
+            if (n % i == 0)
+                return false;
+        return true;
+    }
+
+    private static int getprime(int i) {
+        while (true) {
+            if (isprime(++i)) break;
+        }
+        return i;
+    }
+
     /**
      * Associates the specified value with the specified key in this map.
      * If the map previously contained a mapping for the key,
@@ -52,6 +69,7 @@ public class HashDictionary<K extends Comparable<? super K>, V> implements Dicti
      */
     @Override
     public V insert(K key, V value) {
+        ensurecapacity();
         int i = genHash(key);
         if (search(key) == null) {
             if (dict[i] == null) //Überprüfen, ob Liste schon vorhanden
@@ -88,24 +106,25 @@ public class HashDictionary<K extends Comparable<? super K>, V> implements Dicti
         return null;
     }
 
-    public void ensurecapacity() {
+    /**
+     * ensuring the capacity of the HashDictionary
+     * if not enough space -> enlarge space
+     */
+    private void ensurecapacity() {
         HashDictionary<K, V> backup;
-        if (size + 1 <= load) {
-            load = load * 2;
-            backup = new HashDictionary<>(7);
-
-            Iterator<Entry<K, V>> it = iterator();
-            while (it.hasNext()) {
-                Entry<K, V> e = it.next();
+        if (this.size >= load) {
+            load = getprime((int) (load * 1.2));
+            //System.out.printf("%d is load\n", load); //only for testing
+            backup = new HashDictionary<>(3, load);
+            for (Dictionary.Entry<K, V> e : this)
                 backup.insert(e.getKey(), e.getValue());
-            }
-
+            //System.out.printf("%d %d %d: %d %d %d\n", this.size, this.load, this.key, backup.size, backup.load, backup.key); //only for testing
             dict = backup.dict;
         }
     }
 
     /**
-     * Removes the key-vaue-pair associated with the key.
+     * Removes the key-value-pair associated with the key.
      * Returns the value to which the key was previously associated,
      * or null if the key is not contained in the dictionary.
      *
@@ -146,7 +165,7 @@ public class HashDictionary<K extends Comparable<? super K>, V> implements Dicti
     public Iterator<Entry<K, V>> iterator() {
         return new Iterator<>() {
 
-            int index = 0;
+            int index = -1;
             Iterator<Entry<K, V>> listIterator;
 
             @Override
