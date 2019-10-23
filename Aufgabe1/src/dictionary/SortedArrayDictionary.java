@@ -74,7 +74,7 @@ public class SortedArrayDictionary<K extends Comparable<? super K>, V> implement
         return null;
     }
 
-    void ensurecapacity() {
+    private void ensurecapacity() {
         if (dict.length <= this.size()) {
             //System.out.printf("Enlarging array by %d\n", this.size() * 2);
             Entry[] old = new Entry[this.size() * 2];

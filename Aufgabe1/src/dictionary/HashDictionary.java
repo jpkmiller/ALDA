@@ -10,7 +10,7 @@ public class HashDictionary<K extends Comparable<? super K>, V> implements Dicti
     private int load;
     LinkedList<Entry<K, V>>[] dict;
 
-    public HashDictionary(int key, int load) {
+    HashDictionary(int key, int load) {
         this.dict = new LinkedList[load];
         this.key = key;
         this.load = load;
@@ -23,7 +23,7 @@ public class HashDictionary<K extends Comparable<? super K>, V> implements Dicti
      * @param k der Key, der zu Beginn übergeben wird
      * @return Zeilennummer von Array
      */
-    public int genHash(K k) {
+    private int genHash(K k) {
         String key;
 
         if (!(k instanceof String))
@@ -114,11 +114,9 @@ public class HashDictionary<K extends Comparable<? super K>, V> implements Dicti
         HashDictionary<K, V> backup;
         if (this.size >= load) {
             load = getprime((int) (load * 1.2));
-            //System.out.printf("%d is load\n", load); //only for testing
             backup = new HashDictionary<>(3, load);
             for (Dictionary.Entry<K, V> e : this)
                 backup.insert(e.getKey(), e.getValue());
-            //System.out.printf("%d %d %d: %d %d %d\n", this.size, this.load, this.key, backup.size, backup.load, backup.key); //only for testing
             dict = backup.dict;
         }
     }
