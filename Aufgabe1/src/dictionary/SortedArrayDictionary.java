@@ -141,7 +141,7 @@ public class SortedArrayDictionary<K extends Comparable<? super K>, V> implement
 
             @Override
             public boolean hasNext() {
-                return dict[index + 1] != null;
+                return dict[index] != null;
             }
 
             @Override

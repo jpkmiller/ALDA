@@ -36,19 +36,19 @@ public class DictionaryUI {
                     read(EINGABE.next());
                     break;
                 case "p":
-                    assert dic != null;
+                    //assert dic != null;
                     print();
                     break;
                 case "s":
-                    assert dic != null;
+                    //assert dic != null;
                     search(EINGABE.next());
                     break;
                 case "i":
-                    assert dic != null;
+                    //assert dic != null;
                     insert(EINGABE.next(), EINGABE.next());
                     break;
                 case "r":
-                    assert dic != null;
+                    //assert dic != null;
                     remove(EINGABE.next());
                     break;
                 case "exit":
@@ -58,6 +58,7 @@ public class DictionaryUI {
                     searchMes(EINGABE.nextInt(), EINGABE.nextInt());
                     break;
                 default:
+                    break;
             }
         }
     }
@@ -109,29 +110,38 @@ public class DictionaryUI {
 
     private static void search(String key) {
         System.out.println("Searching for " + key);
-        dic.search(key);
+        String s = null;
+        if ((s = dic.search(key)) != null) {
+            System.out.printf("Search result: %s\n", s);
+        } else {
+            System.out.println("No entry found");
+        }
     }
 
     private static void searchMes(int n, int m) {
         long start = 0, end = 0, diff;
         int c = 0;
+        List<String> l;
         assert m <= dic.size();
         switch (n) {
             case 0:
-                List<Dictionary.Entry<String, String>> l = new LinkedList<>();
-                for (Dictionary.Entry<String, String> e : dic) {
-                    l.add(e);
-                }
+                l = new LinkedList<>();
+                for (Dictionary.Entry<String, String> e : dic)
+                    l.add(e.getKey());
                 start = System.nanoTime();
-                for (Dictionary.Entry<String, String> e : l) {
-                    dic.search(e.getKey());
+                for (String e : l) {
+                    dic.search(e);
+                    if (++c >= m) break;
                 }
                 end = System.nanoTime();
                 break;
             case 1:
+                l = new LinkedList<>();
+                for (Dictionary.Entry<String, String> e : dic)
+                    l.add(e.getValue());
                 start = System.nanoTime();
-                for (Dictionary.Entry<String, String> e : dic) {
-                    dic.search(e.getValue());
+                for (String e : l) {
+                    dic.search(e);
                     if (++c >= m) break;
                 }
                 end = System.nanoTime();
