@@ -10,7 +10,6 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
 
     /**
      * Returns the number of elements in this dictionary.
-     *
      * @return the number of elements in this dictionary.
      */
     @Override
@@ -56,6 +55,16 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
         return oldValue;
     }
 
+    /**
+     * Associates the specified value with the specified key in this map.
+     * If the map previously contained a mapping for the key,
+     * the old value is replaced by the specified value.
+     * Returns the previous value associated with key,
+     * or null if there was no mapping for key.
+     *
+     * @param e is the Entry that is going to be inserted in the tree
+     * @param p is the starting node
+     */
     private Node<K, V> insertR(Entry<K, V> e, Node<K, V> p) {
         if (p == null) {
             //insert new Entry
@@ -80,6 +89,10 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
         return p;
     }
 
+    /**
+     * @param p is the starting node
+     * @return is the new root after balancing the entire tree
+     */
     private Node<K, V> balance(Node<K, V> p) {
         if (p == null)
             return null;
@@ -147,6 +160,15 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
         return searchR(key, root);
     }
 
+    /**
+     * rekursive method
+     * Returns the value to which the specified key is mapped,
+     * or null if this map contains no mapping for the key.
+     *
+     * @param key the key whose associated value is to be returned.
+     * @param p   is the starting node
+     * @return the value to which the specified key is mapped, or null if this map contains no mapping for the key.
+     */
     private V searchR(K key, Node<K, V> p) {
         if (p == null)
             return null;
@@ -172,6 +194,16 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
         return oldValue;
     }
 
+    /**
+     * rekursive method
+     * Removes the key-value-pair associated with the key.
+     * Returns the value to which the key was previously associated,
+     * or null if the key is not contained in the dictionary.
+     *
+     * @param key key whose mapping is to be removed from the map.
+     * @param p   is the starting node
+     * @return the previous value associated with key, or null if there was no mapping for key.
+     */
     private Node<K, V> removeR(K key, Node<K, V> p) {
         if (p == null) {
             size--;
@@ -210,6 +242,7 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
         return p;
     }
 
+
     private Node<K, V> parentOfLeftMostAncestor(Node<K, V> p) {
         assert p != null;
         while (p.parent != null && p.parent.right == p)
@@ -217,10 +250,19 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
         return p.parent;
     }
 
+    /**
+     * public prettyPrint method
+     */
     void prettyPrint() {
         prettyPrintR(root, 10);
     }
 
+
+    /**
+     * rekursive Method to print the BinaryTree with parents
+     * @param head is the starting node
+     * @param height is a parameter to display properly the branches of the tree
+     */
     private void prettyPrintR(Node<K, V> head, int height) {
         if (head == null)
             return;
