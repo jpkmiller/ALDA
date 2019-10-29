@@ -25,7 +25,9 @@ public class DictionaryUI {
             in = EINGABE.next();
             switch (in) {
                 case "create":
-                    if (EINGABE.hasNext() && EINGABE.next().equals("hash"))
+                    if (EINGABE.hasNext() && EINGABE.next().equals("binary"))
+                        dic = create(2);
+                    else if (EINGABE.hasNext() && EINGABE.next().equals("hash"))
                         dic = create(1);
                     else
                         dic = create(0);
@@ -65,7 +67,9 @@ public class DictionaryUI {
 
     private static Dictionary create(int i) {
         System.out.println("Creating Dictionary");
-        if (i == 1)
+        if (i == 2)
+            return new BinaryTreeDictionary();
+        else if (i == 1)
             return new HashDictionary(3, 31);
         else
             return new SortedArrayDictionary();
@@ -110,7 +114,7 @@ public class DictionaryUI {
 
     private static void search(String key) {
         System.out.println("Searching for " + key);
-        String s = null;
+        String s;
         if ((s = dic.search(key)) != null) {
             System.out.printf("Search result: %s\n", s);
         } else {
