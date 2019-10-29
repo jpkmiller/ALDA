@@ -25,7 +25,9 @@ public class DictionaryUI {
             in = EINGABE.next();
             switch (in) {
                 case "create":
-                    if (EINGABE.hasNext() && EINGABE.next().equals("hash"))
+                    if (EINGABE.hasNext() && EINGABE.next().equals("binary"))
+                        dic = create(2);
+                    else if (EINGABE.hasNext() && EINGABE.next().equals("hash"))
                         dic = create(1);
                     else
                         dic = create(0);
@@ -65,7 +67,9 @@ public class DictionaryUI {
 
     private static Dictionary create(int i) {
         System.out.println("Creating Dictionary");
-        if (i == 1)
+        if (i == 2)
+            return new BinaryTreeDictionary();
+        else if (i == 1)
             return new HashDictionary(3, 31);
         else
             return new SortedArrayDictionary();
@@ -103,19 +107,21 @@ public class DictionaryUI {
 
     private static void print() {
         System.out.println("Printing Dictionary");
-        for (Dictionary.Entry<String, String> e : dic)
-            System.out.println(e.getKey() + ": " + e.getValue() + " search: " + dic.search(e.getKey()));
+        if (dic instanceof BinaryTreeDictionary)
+            pp();
+        else
+            for (Dictionary.Entry<String, String> e : dic)
+                System.out.println(e.getKey() + ": " + e.getValue() + " search: " + dic.search(e.getKey()));
         System.out.println("Finished printing");
     }
 
     private static void search(String key) {
         System.out.println("Searching for " + key);
-        String s = null;
-        if ((s = dic.search(key)) != null) {
+        String s;
+        if ((s = dic.search(key)) != null)
             System.out.printf("Search result: %s\n", s);
-        } else {
+        else
             System.out.println("No entry found");
-        }
     }
 
     private static void searchMes(int n, int m) {
@@ -149,6 +155,11 @@ public class DictionaryUI {
         }
         diff = end - start;
         System.out.printf("Measured time %d nanoseconds\n", diff);
+    }
+
+    private static void pp() {
+        if (dic instanceof BinaryTreeDictionary)
+            ((BinaryTreeDictionary<String, String>) dic).prettyPrint();
     }
 
     private static void insert(String key, String value) {

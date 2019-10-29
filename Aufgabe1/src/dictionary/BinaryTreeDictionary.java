@@ -3,10 +3,20 @@ package dictionary;
 import java.util.Iterator;
 
 public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements Dictionary<K, V> {
-
     private Node<K, V> root;
+
     private int size = 0;
     private V oldValue;
+
+    /**
+     * Returns the number of elements in this dictionary.
+     *
+     * @return the number of elements in this dictionary.
+     */
+    @Override
+    public int size() {
+        return this.size;
+    }
 
     /**
      * @param p is a Node whose height is returned
@@ -17,7 +27,6 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
             return -1;
         return p.height;
     }
-
 
     /**
      * @param p is a Node whose balance is returned
@@ -82,9 +91,9 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
                 p = rotateLeftRight(p); //A2
         } else if (getBalance(p) == 2) {
             if (getBalance(p.right) > 0)
-                p = rotateLeft(p);
+                p = rotateLeft(p); //B1
             else
-                p = rotateRightLeft(p);
+                p = rotateRightLeft(p); //B2
         }
         return p;
     }
@@ -92,6 +101,8 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
     private Node<K, V> rotateRight(Node<K, V> p) {
         assert p.left != null;
         Node<K, V> q = p.left;
+        q.parent = p.parent;
+        p.parent = q;
         p.left = q.right;
         q.right = p;
         p.height = Math.max(getHeight(p.left), getHeight(p.right)) + 1;
@@ -102,6 +113,8 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
     private Node<K, V> rotateLeft(Node<K, V> p) {
         assert p.right != null;
         Node<K, V> q = p.right;
+        q.parent = p.parent;
+        p.parent = q;
         p.right = q.left;
         q.left = p;
         p.height = Math.max(getHeight(p.right), getHeight(p.left)) + 1;
@@ -190,15 +203,37 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
         return p;
     }
 
-    /**
-     * Returns the number of elements in this dictionary.
-     *
-     * @return the number of elements in this dictionary.
-     */
-    @Override
-    public int size() {
-        return this.size;
+    private Node<K, V> leftMostDescendant(Node<K, V> p) {
+        assert p != null;
+        while (p.left != null)
+            p = p.left;
+        return p;
     }
+
+    private Node<K, V> parentOfLeftMostAncestor(Node<K, V> p) {
+        assert p != null;
+        while (p.parent != null && p.parent.right == p)
+            p = p.parent;
+        return p.parent;
+    }
+
+    void prettyPrint() {
+        prettyPrintR(root, 10);
+    }
+
+    private void prettyPrintR(Node<K, V> head, int height) {
+        if (head == null)
+            return;
+        StringBuilder leer = new StringBuilder();
+        leer.append("     ".repeat(Math.max(0, height)));
+        System.out.printf("%s%s", leer, head.e.getKey());
+        if (head.parent != null)
+            System.out.printf(" p: %s", head.parent.e.getKey());
+        System.out.print("\n");
+        prettyPrintR(head.left, height - 2);
+        prettyPrintR(head.right, height + 2);
+    }
+
 
     /**
      * Returns an iterator over the entries in this dictionary.
@@ -230,26 +265,9 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
             public Entry<K, V> next() {
                 return head.e;
             }
-
-            private Node<K, V> leftMostDescendant(Node<K, V> p) {
-                assert p != null;
-                while (p.left != null)
-                    p = p.left;
-                return p;
-            }
-
-            private Node<K, V> parentOfLeftMostAncestor(Node<K, V> p) {
-                assert p != null;
-                while (p.parent != null && p.parent.right == p)
-                    p = p.parent;
-                return p.parent;
-            }
-
         };
     }
 
-    void prettyPrint() {
-    }
 
     static private class Node<K extends Comparable<? super K>, V> {
         Node<K, V> right;
