@@ -8,7 +8,7 @@ public class SortedArrayDictionary<K extends Comparable<? super K>, V> implement
     private Entry<K, V>[] dict; //ist nach dem  key sortiert
     private int size; //gibt die Länge des Feldes an
 
-    public SortedArrayDictionary() {
+    SortedArrayDictionary() {
         this.dict = new Entry[DEF_CAPACITY];
         this.size = 0;
     }
@@ -135,7 +135,7 @@ public class SortedArrayDictionary<K extends Comparable<? super K>, V> implement
      */
     @Override
     public Iterator<Entry<K, V>> iterator() {
-        return new Iterator<Entry<K, V>>() {
+        return new Iterator<>() {
 
             int index = 0;
 
