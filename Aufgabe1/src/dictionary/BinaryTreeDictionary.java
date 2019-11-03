@@ -33,7 +33,7 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
      */
     private int getBalance(Node<K, V> p) {
         if (p == null) return 0;
-        return getBalance(p.right) - getBalance(p.left);
+        return getHeight(p.right) - getHeight(p.left);
     }
 
     /**
@@ -67,17 +67,14 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
      */
     private Node<K, V> insertR(Entry<K, V> e, Node<K, V> p) {
         if (p == null) {
-            //insert new Entry
             p = new Node<>(e);
             oldValue = null;
             size++;
         } else if (e.getKey().compareTo(p.e.getKey()) < 0) {
-            //goto left side of tree because our key is smaller than the parent key
             p.left = insertR(e, p.left);
             if (p.left != null)
                 p.left.parent = p;
         } else if (e.getKey().compareTo(p.e.getKey()) > 0) {
-            //goto right side of tree because our key is smaller than the parent key
             p.right = insertR(e, p.right);
             if (p.right != null)
                 p.right.parent = p;
@@ -94,16 +91,17 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
      * @return is the new root after balancing the entire tree
      */
     private Node<K, V> balance(Node<K, V> p) {
-        if (p == null)
+        if (p == null) {
             return null;
+        }
         p.height = Math.max(getHeight(p.left), getHeight(p.right)) + 1;
         if (getBalance(p) == -2) {
             if (getBalance(p.left) <= 0)
                 p = rotateRight(p); //A1
             else
                 p = rotateLeftRight(p); //A2
-        } else if (getBalance(p) == 2) {
-            if (getBalance(p.right) > 0)
+        } else if (getBalance(p) == +2) {
+            if (getBalance(p.right) >= 0)
                 p = rotateLeft(p); //B1
             else
                 p = rotateRightLeft(p); //B2
@@ -114,37 +112,41 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
     private Node<K, V> rotateRight(Node<K, V> p) {
         assert p.left != null;
         Node<K, V> q = p.left;
-        q.parent = p.parent;
-        p.parent = q;
         p.left = q.right;
+        if (p.left != null)
+            p.left.parent = p;
         q.right = p;
+        if (q.right != null)
+            q.right.parent = q;
         p.height = Math.max(getHeight(p.left), getHeight(p.right)) + 1;
-        q.height = Math.max(getHeight(p.left), getHeight(q.right)) + 1;
+        q.height = Math.max(getHeight(q.left), getHeight(q.right)) + 1;
         return q;
     }
 
     private Node<K, V> rotateLeft(Node<K, V> p) {
         assert p.right != null;
         Node<K, V> q = p.right;
-        q.parent = p.parent;
-        p.parent = q;
         p.right = q.left;
+        if (p.right != null)
+            p.right.parent = p;
         q.left = p;
+        if (q.left != null)
+            q.left.parent = q;
         p.height = Math.max(getHeight(p.right), getHeight(p.left)) + 1;
-        q.height = Math.max(getHeight(p.right), getHeight(q.left)) + 1;
+        q.height = Math.max(getHeight(q.right), getHeight(q.left)) + 1;
         return q;
-    }
-
-    private Node<K, V> rotateRightLeft(Node<K, V> p) {
-        assert p.right != null;
-        p.right = rotateRight(p.right);
-        return rotateLeft(p);
     }
 
     private Node<K, V> rotateLeftRight(Node<K, V> p) {
         assert p.left != null;
         p.left = rotateLeft(p.left);
         return rotateRight(p);
+    }
+
+    private Node<K, V> rotateRightLeft(Node<K, V> p) {
+        assert p.right != null;
+        p.right = rotateRight(p.right);
+        return rotateLeft(p);
     }
 
 
@@ -205,22 +207,23 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
      * @return the previous value associated with key, or null if there was no mapping for key.
      */
     private Node<K, V> removeR(K key, Node<K, V> p) {
-        if (p == null) {
-            size--;
-            oldValue = null;
-        } else if (key.compareTo(p.e.getKey()) < 0)
+        if (p == null) oldValue = null;
+        else if (key.compareTo(p.e.getKey()) < 0)
             p.left = removeR(key, p.left);
         else if (key.compareTo(p.e.getKey()) > 0)
             p.right = removeR(key, p.right);
         else if (p.left == null || p.right == null) {
             oldValue = p.e.getValue();
             p = (p.left != null) ? p.left : p.right;
+            size--;
         } else {
-            MinEntry<K, V> min = new MinEntry<K, V>();
+            MinEntry<K, V> min = new MinEntry<>();
             p.right = getRemMinR(p.right, min);
             oldValue = p.e.getValue();
             p.e = new Entry<>(min.key, min.value);
+            size--;
         }
+        p = balance(p);
         return p;
     }
 
@@ -232,6 +235,7 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
             p = p.right;
         } else
             p.left = getRemMinR(p.left, min);
+        p = balance(p);
         return p;
     }
 
@@ -254,7 +258,7 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
      * public prettyPrint method
      */
     void prettyPrint() {
-        prettyPrintR(root, 10);
+        prettyPrintR2(root, 10);
     }
 
 
@@ -263,7 +267,7 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
      * @param head is the starting node
      * @param height is a parameter to display properly the branches of the tree
      */
-    private void prettyPrintR(Node<K, V> head, int height) {
+    private void prettyPrintR2(Node<K, V> head, int height) {
         if (head == null)
             return;
         StringBuilder leer = new StringBuilder();
@@ -272,8 +276,18 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
         if (head.parent != null)
             System.out.printf(" p: %s", head.parent.e.getKey());
         System.out.print("\n");
-        prettyPrintR(head.left, height - 2);
-        prettyPrintR(head.right, height + 2);
+        prettyPrintR2(head.left, height - 2);
+        prettyPrintR2(head.right, height + 2);
+    }
+
+    private void prettyPrintR(Node<K, V> head, int height) {
+        if (head == null)
+            return;
+        StringBuilder leer = new StringBuilder();
+        leer.append("-".repeat(Math.max(0, height)));
+        System.out.printf("%s%s\n", leer, head.e.getKey());
+        prettyPrintR(head.left, height + 1);
+        prettyPrintR(head.right, height + 1);
     }
 
 
