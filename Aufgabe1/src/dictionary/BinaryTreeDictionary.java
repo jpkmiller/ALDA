@@ -193,6 +193,8 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
     @Override
     public V remove(K key) {
         root = removeR(key, root);
+        if (root != null)
+            root.parent = null;
         return oldValue;
     }
 
@@ -210,8 +212,12 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
         if (p == null) oldValue = null;
         else if (key.compareTo(p.e.getKey()) < 0)
             p.left = removeR(key, p.left);
+        if (p.left != null)
+            p.left.parent = p;
         else if (key.compareTo(p.e.getKey()) > 0)
             p.right = removeR(key, p.right);
+        if (p.right != null)
+            p.right.parent = p;
         else if (p.left == null || p.right == null) {
             oldValue = p.e.getValue();
             p = (p.left != null) ? p.left : p.right;
