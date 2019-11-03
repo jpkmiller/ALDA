@@ -163,7 +163,7 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
     }
 
     /**
-     * rekursive method
+     * recursive method
      * Returns the value to which the specified key is mapped,
      * or null if this map contains no mapping for the key.
      *
@@ -199,7 +199,7 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
     }
 
     /**
-     * rekursive method
+     * recursive method
      * Removes the key-value-pair associated with the key.
      * Returns the value to which the key was previously associated,
      * or null if the key is not contained in the dictionary.
@@ -264,21 +264,19 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
      * public prettyPrint method
      */
     void prettyPrint() {
-        prettyPrintR2(root, 10);
+        prettyPrintR(root, 0);
     }
 
 
     /**
-     * rekursive Method to print the BinaryTree with parents
+     * recursive Method to print the BinaryTree with parents
      * @param head is the starting node
      * @param height is a parameter to display properly the branches of the tree
      */
     private void prettyPrintR2(Node<K, V> head, int height) {
         if (head == null)
             return;
-        StringBuilder leer = new StringBuilder();
-        leer.append("     ".repeat(Math.max(0, height)));
-        System.out.printf("%s%s", leer, head.e.getKey());
+        System.out.printf("%s%s", "     ".repeat(Math.max(0, height)), head.e.getKey());
         if (head.parent != null)
             System.out.printf(" p: %s", head.parent.e.getKey());
         System.out.print("\n");
@@ -289,11 +287,12 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
     private void prettyPrintR(Node<K, V> head, int height) {
         if (head == null)
             return;
-        StringBuilder leer = new StringBuilder();
-        leer.append("-".repeat(Math.max(0, height)));
-        System.out.printf("%s%s\n", leer, head.e.getKey());
-        prettyPrintR(head.left, height + 1);
-        prettyPrintR(head.right, height + 1);
+        System.out.printf("%s%s", "-".repeat(Math.max(0, height)), head.e.getKey());
+        if (head.parent != null)
+            System.out.printf(" p: %s", head.parent.e.getKey());
+        System.out.print("\n");
+        prettyPrintR(head.left, height + 2);
+        prettyPrintR(head.right, height + 2);
     }
 
 
@@ -336,7 +335,7 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
         Node<K, V> left;
         int height;
         Entry<K, V> e;
-        private Node<K, V> parent; //Elternzeiger
+        private Node<K, V> parent;
 
         Node(Entry<K, V> e) {
             height = 0;

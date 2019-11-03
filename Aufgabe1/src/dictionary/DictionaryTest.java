@@ -37,9 +37,7 @@ public class DictionaryTest {
         Dictionary<String, String> dict = new BinaryTreeDictionary<>();
         //testDict(dict);
 
-        // Test für BinaryTreeDictionary mit prettyPrint 
-        // (siehe Aufgabe 10; Programmiertechnik 2).
-        // Pruefen Sie die Ausgabe von prettyPrint auf Papier nach.
+        // Test für BinaryTreeDictionary mit prettyPrint
         BinaryTreeDictionary<Integer, Integer> btd = new BinaryTreeDictionary<>();
         btd.insert(10, 0);
         btd.insert(20, 0);

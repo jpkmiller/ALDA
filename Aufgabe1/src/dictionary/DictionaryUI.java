@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 public class DictionaryUI {
 
     private static final Scanner EINGABE = new Scanner(System.in);
-    private static Dictionary<String, String> dic = new SortedArrayDictionary();
+    private static Dictionary<String, String> dic = new SortedArrayDictionary<>();
 
     public static void main(String[] args) {
         handler();
@@ -25,12 +25,16 @@ public class DictionaryUI {
             in = EINGABE.next();
             switch (in) {
                 case "create":
-                    if (EINGABE.hasNext() && EINGABE.next().equals("binary"))
-                        dic = create(2);
-                    else if (EINGABE.hasNext() && EINGABE.next().equals("hash"))
-                        dic = create(1);
-                    else
-                        dic = create(0);
+                    switch (EINGABE.next()) {
+                        case "binary":
+                            dic = create(2);
+                            break;
+                        case "hash":
+                            dic = create(1);
+                            break;
+                        default:
+                            dic = create(0);
+                    }
                     break;
                 case "read":
                     if (EINGABE.hasNextInt())
@@ -38,19 +42,15 @@ public class DictionaryUI {
                     read(EINGABE.next());
                     break;
                 case "p":
-                    //assert dic != null;
                     print();
                     break;
                 case "s":
-                    //assert dic != null;
                     search(EINGABE.next());
                     break;
                 case "i":
-                    //assert dic != null;
                     insert(EINGABE.next(), EINGABE.next());
                     break;
                 case "r":
-                    //assert dic != null;
                     remove(EINGABE.next());
                     break;
                 case "exit":
@@ -65,14 +65,17 @@ public class DictionaryUI {
         }
     }
 
-    private static Dictionary create(int i) {
-        System.out.println("Creating Dictionary");
-        if (i == 2)
-            return new BinaryTreeDictionary();
-        else if (i == 1)
-            return new HashDictionary(3, 31);
-        else
-            return new SortedArrayDictionary();
+    private static Dictionary<String, String> create(int i) {
+        System.out.print("Creating ");
+        if (i == 2) {
+            System.out.print("BinaryTree Dictionary\n");
+            return new BinaryTreeDictionary<>();
+        } else if (i == 1) {
+            System.out.print("Hash Dictionary\n");
+            return new HashDictionary<>(3, 31);
+        }
+        System.out.print("SortedArray Dictionary\n");
+        return new SortedArrayDictionary<>();
     }
 
     private static void read(String next) {
