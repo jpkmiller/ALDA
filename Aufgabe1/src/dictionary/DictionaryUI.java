@@ -39,7 +39,8 @@ public class DictionaryUI {
                 case "read":
                     if (EINGABE.hasNextInt())
                         dic = read(EINGABE.nextInt(), EINGABE.next());
-                    read(EINGABE.next());
+                    else
+                        read(EINGABE.next());
                     break;
                 case "p":
                     print();
