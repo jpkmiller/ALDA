@@ -128,35 +128,27 @@ public class DictionaryUI {
             System.out.println("No entry found");
     }
 
+
     private static void searchMes(int n, int m) {
         long start = 0, end = 0, diff;
         int c = 0;
-        List<String> l;
-        assert m <= dic.size();
-        switch (n) {
+        List<String> l = new LinkedList<>();
+        switch ( n) {
             case 0:
-                l = new LinkedList<>();
                 for (Dictionary.Entry<String, String> e : dic)
                     l.add(e.getKey());
-                start = System.nanoTime();
-                for (String e : l) {
-                    dic.search(e);
-                    if (++c >= m) break;
-                }
-                end = System.nanoTime();
                 break;
             case 1:
-                l = new LinkedList<>();
                 for (Dictionary.Entry<String, String> e : dic)
                     l.add(e.getValue());
-                start = System.nanoTime();
-                for (String e : l) {
-                    dic.search(e);
-                    if (++c >= m) break;
-                }
-                end = System.nanoTime();
                 break;
         }
+        start = System.nanoTime();
+        for (String e : l) {
+            dic.search(e);
+            if (++c >= m) break;
+        }
+        end = System.nanoTime();
         diff = end - start;
         System.out.printf("Measured time %d nanoseconds\n", diff);
     }
@@ -172,7 +164,7 @@ public class DictionaryUI {
     }
 
     private static void remove(String key) {
-        System.out.println("Removing " +  key);
+        System.out.println("Removing " + key);
         dic.remove(key);
     }
 

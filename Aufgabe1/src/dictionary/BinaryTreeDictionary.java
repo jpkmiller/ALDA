@@ -209,16 +209,17 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
      * @return the previous value associated with key, or null if there was no mapping for key.
      */
     private Node<K, V> removeR(K key, Node<K, V> p) {
-        if (p == null) oldValue = null;
-        else if (key.compareTo(p.e.getKey()) < 0)
+        if (p == null)
+            oldValue = null;
+        else if (key.compareTo(p.e.getKey()) < 0) {
             p.left = removeR(key, p.left);
-        if (p.left != null)
-            p.left.parent = p;
-        else if (key.compareTo(p.e.getKey()) > 0)
+            if (p.left != null)
+                p.left.parent = p;
+        } else if (key.compareTo(p.e.getKey()) > 0) {
             p.right = removeR(key, p.right);
-        if (p.right != null)
-            p.right.parent = p;
-        else if (p.left == null || p.right == null) {
+            if (p.right != null)
+                p.right.parent = p;
+        } else if (p.left == null || p.right == null) {
             oldValue = p.e.getValue();
             p = (p.left != null) ? p.left : p.right;
             size--;
@@ -318,11 +319,10 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
 
             @Override
             public boolean hasNext() {
-                if (head == null && root != null)
+                if (head == null && root != null) {
                     head = leftMostDescendant(root);
-
-                assert head != null;
-                if (head.right != null)
+                    assert head != null;
+                } else if (head.right != null)
                     head = leftMostDescendant(head.right);
                 else
                     head = parentOfLeftMostAncestor(head);
