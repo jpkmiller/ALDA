@@ -3,7 +3,10 @@
 
 package directedGraph;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Implementierung von DirectedGraph
@@ -36,10 +39,9 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
      */
     @Override
     public boolean addVertex(V v) {
-        if (succ.containsKey(v))
+        if (succ.containsKey(v) && pred.containsKey(v))
             return false;
-        else
-            succ.put(v, new TreeMap<>());
+        succ.put(v, new TreeMap<>());
         pred.put(v, new TreeMap<>());
         return true;
     }
@@ -91,6 +93,7 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
 
     /**
      * Prüft ob Knoten v im Graph vorhanden ist.
+     *
      * @param v Knoten
      * @return true, falls Knoten vorhanden ist.
      */
@@ -101,6 +104,7 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
 
     /**
      * Prüft ob Kante im Graph vorhanden ist.
+     *
      * @param v Startknoten
      * @param w Endknoten
      * @return true, falls Kante vorhanden ist.
@@ -112,10 +116,11 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
 
     /**
      * Liefert Gewicht der Kante zurück.
+     *
      * @param v Startknoten
      * @param w Endknoten
-     * @throws IllegalArgumentException falls die Kante nicht existiert.
      * @return Gewicht der Kante.
+     * @throws IllegalArgumentException falls die Kante nicht existiert.
      */
     @Override
     public double getWeight(V v, V w) {
@@ -126,10 +131,11 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
     /**
      * Liefert Eingangsgrad des Knotens v zurück.
      * Das ist die Anzahl der Kanten mit Zielknoten v.
+     *
      * @param v Knoten
-     * @throws IllegalArgumentException falls Knoten v
-     * nicht im Graph vorhanden ist.
      * @return Knoteneingangsgrad
+     * @throws IllegalArgumentException falls Knoten v
+     *                                  nicht im Graph vorhanden ist.
      */
     @Override
     public int getInDegree(V v) {
@@ -139,10 +145,11 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
     /**
      * Liefert Ausgangsgrad des Knotens v zurück.
      * Das ist die Anzahl der Kanten mit Quellknoten v.
+     *
      * @param v Knoten
-     * @throws IllegalArgumentException falls Knoten v
-     * nicht im Graph vorhanden ist.
      * @return Knotenausgangsgrad
+     * @throws IllegalArgumentException falls Knoten v
+     *                                  nicht im Graph vorhanden ist.
      */
     @Override
     public int getOutDegree(V v) {
@@ -158,10 +165,11 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
      * Liefert eine nicht modifizierbare Sicht (unmodifiable view) auf
      * die Menge aller Vorgängerknoten von v zurück.
      * Das sind alle die Knoten, von denen eine Kante zu v führt.
+     *
      * @param v Knoten
-     * @throws IllegalArgumentException falls Knoten v
-     * nicht im Graph vorhanden ist.
      * @return Knotenmenge
+     * @throws IllegalArgumentException falls Knoten v
+     *                                  nicht im Graph vorhanden ist.
      */
     @Override
     public Set<V> getPredecessorVertexSet(V v) {
@@ -199,6 +207,7 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
     /**
      * Erzeugt einen invertierten Graphen,
      * indem jede Kante dieses Graphens in umgekehrter Richtung abgespeichert wird.
+     *
      * @return invertierter Graph
      */
     @Override
