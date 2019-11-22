@@ -156,6 +156,12 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
         return succ.get(v).size();
     }
 
+    /**
+     * Liefert eine nicht modifizierbare Sicht (unmodifiable view)
+     * auf die Menge aller Knoten im Graph zurück.
+     *
+     * @return Knotenmenge
+     */
     @Override
     public Set<V> getVertexSet() {
         return Collections.unmodifiableSet(succ.keySet()); // nicht modifizierbare Sicht
@@ -173,12 +179,12 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
      */
     @Override
     public Set<V> getPredecessorVertexSet(V v) {
-        return pred.get(v).keySet();
+        return Collections.unmodifiableSet(pred.get(v).keySet());
     }
 
     @Override
     public Set<V> getSuccessorVertexSet(V v) {
-        return succ.get(v).keySet();
+        return Collections.unmodifiableSet(succ.get(v).keySet());
     }
 
     /**
@@ -254,20 +260,17 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
         // 3 --> 7 weight = 1.0
         // ...
 
-        System.out.println("");
         System.out.println(g.getOutDegree(2));                // 2
         System.out.println(g.getSuccessorVertexSet(2));    // 5, 6
         System.out.println(g.getInDegree(6));                // 2
         System.out.println(g.getPredecessorVertexSet(6));    // 2, 4
 
-        System.out.println("");
         System.out.println(g.containsEdge(1, 2));    // true
         System.out.println(g.containsEdge(2, 1));    // false
         System.out.println(g.getWeight(1, 2));    // 1.0
         g.addEdge(1, 2, 5.0);
         System.out.println(g.getWeight(1, 2));    // 5.0
 
-        System.out.println("");
         System.out.println(g.invert());
         // 1 --> 5 weight = 1.0
         // 2 --> 1 weight = 1.0
