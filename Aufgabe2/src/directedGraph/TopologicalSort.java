@@ -13,8 +13,8 @@ import java.util.*;
  * @since 22.02.2017
  */
 public class TopologicalSort<V> {
-    private List<V> ts = new LinkedList<>(); // topologisch sortierte Folge
-    private Map<V, Integer> inDegree = new TreeMap<>(); //Abbildung der Values mit der Anzahl ihrer noch nicht besuchten Vorgängern
+    private List<V> ts; // topologisch sortierte Folge
+    private Map<V, Integer> inDegree; //Abbildung der Values mit der Anzahl ihrer noch nicht besuchten Vorgängern
     private DirectedGraph<V> myGraph;
 
     /**
@@ -34,24 +34,29 @@ public class TopologicalSort<V> {
      */
     public List<V> topologicalSortedList() {
         Queue<V> q = new LinkedList<>();
+        ts = new LinkedList<>();
+        inDegree = new TreeMap<>();
 
+
+        //Anzahl der Kanten zum Zielknoten v in inDegree abbilden
         for (V v : myGraph.getVertexSet()) {
             int ins = myGraph.getInDegree(v);
-            System.out.printf("%d ", ins);
-            inDegree.put(v, ins); //Anzahl der Kanten zum Zielknoten v in inDegree abbilden
-            if (ins == 0) q.add(v);
+//            System.out.printf("%d ", ins);
+            inDegree.put(v, ins);
+            if (ins == 0) q.add(v); //Wenn 0 Eingangskanten -> in Schlange einfügen
         }
 
 
         while (!q.isEmpty()) {
-            V v = q.remove();
-            ts.add(v);
-            for (V w : myGraph.getSuccessorVertexSet(v)) {
-                inDegree.put(v, inDegree.get(w) - 1);
-                if (inDegree.get(w) == 0)
+            V v = q.remove(); //Entferne V aus der Queue, da es jetzt der erste Eintrag ist, der 0 Vorgänger hat
+            ts.add(v); //Füge V zur Liste hinzu
+            for (V w : myGraph.getSuccessorVertexSet(v)) { //Iteriere über alle Nachfolger von V und aktualisiere diese, da diese jetzt alle einen Vorgänger weniger haben
+                inDegree.put(w, inDegree.get(w) - 1); //aktualisiere alle Nachfolgereinträgen mit der Anzahl der Vorgangknoten - 1 -> Vorgängerknoten V wurde entfernt
+                if (inDegree.get(w) == 0) //Wenn der Nachfolger von V 0 geworden ist, wird er zur Queue hinzugefügt
                     q.add(w);
             }
         }
+
 
         if (ts.size() != myGraph.getNumberOfVertexes())
             return null;
