@@ -26,8 +26,8 @@ public interface DirectedGraph<V> {
      * Fügt neue Kante (mit Gewicht 1) zum Graph dazu.
 	 * Falls einer der beiden Knoten noch nicht im Graphen vorhanden ist,
 	 * dann wird er dazugefügt.
-	 * Falls die Kante schon vorhanden ist, dann wird das Gewicht 
-	 * mit 1 überschrieben. 
+     * Falls die Kante schon vorhanden ist, dann wird das Gewicht
+     * mit 1 überschrieben.
      * @param v Startknoten
      * @param w Zielknoten
      * @return true, falls Kante noch nicht vorhanden war.
@@ -38,7 +38,7 @@ public interface DirectedGraph<V> {
      * Fügt neue Kante mit Gewicht weight zum Graph dazu.
 	 * Falls einer der beiden Knoten noch nicht im Graphen vorhanden ist,
 	 * dann wird er dazugefügt.
-	 * Falls die Kante schon vorhanden ist, dann wird das Gewicht 
+     * Falls die Kante schon vorhanden ist, dann wird das Gewicht
 	 * mit weight überschrieben.
      * @param v Startknoten
      * @param w Zielknoten
@@ -61,7 +61,7 @@ public interface DirectedGraph<V> {
      * @return true, falls Kante vorhanden ist.
      */
     boolean containsEdge(V v, V w);
-    
+
     /**
      * Liefert Gewicht der Kante zurück.
      * @param v Startknoten
@@ -84,13 +84,13 @@ public interface DirectedGraph<V> {
     int getNumberOfEdges();
 
     /**
-     * Liefert eine nicht modifizierbare Sicht (unmodifiable view) 
+     * Liefert eine nicht modifizierbare Sicht (unmodifiable view)
 	 * auf die Menge aller Knoten im Graph zurück.
-	 * 
+     *
      * @return Knotenmenge
      */
     Set<V> getVertexSet();
-    
+
 
     /**
      * Liefert Eingangsgrad des Knotens v zurück.
@@ -124,8 +124,8 @@ public interface DirectedGraph<V> {
     Set<V> getPredecessorVertexSet(V v);
 
     /**
-     * Liefert eine nicht modifizierbare Sicht (unmodifiable view) auf 
-	 * die Menge aller Nachfolgerknoten von v zurück. 
+     * Liefert eine nicht modifizierbare Sicht (unmodifiable view) auf
+     * die Menge aller Nachfolgerknoten von v zurück.
      * Das sind alle die Knoten, zu denen eine Kante von v führt.
      * @param v Knoten
      * @throws IllegalArgumentException falls Knoten v
@@ -133,10 +133,10 @@ public interface DirectedGraph<V> {
      * @return Knotenmenge
      */
     Set<V> getSuccessorVertexSet(V v);
-	
-	/**
-     * Erzeugt einen invertierten Graphen, 
-	 * indem jede Kante dieses Graphens in umgekehrter Richtung abgespeichert wird. 
+
+    /**
+     * Erzeugt einen invertierten Graphen,
+     * indem jede Kante dieses Graphens in umgekehrter Richtung abgespeichert wird.
      * @return invertierter Graph
      */
     DirectedGraph<V> invert();

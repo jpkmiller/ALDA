@@ -5,20 +5,18 @@ package directedGraph;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Klasse für Bestimmung aller strengen Komponenten.
  * Kosaraju-Sharir Algorithmus.
+ *
+ * @param <V> Knotentyp.
  * @author Oliver Bittel
  * @since 22.02.2017
- * @param <V> Knotentyp.
  */
 public class StrongComponents<V> {
-	// comp speichert fuer jede Komponente die zughörigen Knoten.
+    // comp speichert fuer jede Komponente die zughörigen Knoten.
     // Die Komponenten sind numeriert: 0, 1, 2, ...
     // Fuer Beispielgraph in Aufgabenblatt 2, Abb3:
     // Component 0: 5, 6, 7,
@@ -26,94 +24,158 @@ public class StrongComponents<V> {
     // Component 2: 1, 2, 3,
     // Component 3: 4,
 
-	private final Map<Integer,Set<V>> comp = new TreeMap<>();
-	
-	/**
-	 * Ermittelt alle strengen Komponenten mit
-	 * dem Kosaraju-Sharir Algorithmus.
-	 * @param g gerichteter Graph.
-	 */
-	public StrongComponents(DirectedGraph<V> g) {
-		// ...
-	}
-	
-	/**
-	 * 
-	 * @return Anzahl der strengen Komponeneten.
-	 */
-	public int numberOfComp() {
-		return comp.size();
-	}
+    private final Map<Integer, Set<V>> comp = new TreeMap<>();
+    private final DirectedGraph<V> mygraph;
 
-	@Override
-	public String toString() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-	
-	/**
-	 * Liest einen gerichteten Graphen von einer Datei ein. 
-	 * @param fn Dateiname.
-	 * @return gerichteter Graph.
-	 * @throws FileNotFoundException
-	 */
-	public static DirectedGraph<Integer> readDirectedGraph(File fn) throws FileNotFoundException {
-		DirectedGraph<Integer> g = new AdjacencyListDirectedGraph<>();
-		Scanner sc = new Scanner(fn);
-		sc.nextInt();
-		sc.nextInt();
-		while (sc.hasNextInt()) {
-			int v = sc.nextInt();
-			int w = sc.nextInt();
-			g.addEdge(v, w);
-		}
-		return g;
-	}
-	
-	private static void test1() {
-		DirectedGraph<Integer> g = new AdjacencyListDirectedGraph<>();
-		g.addEdge(1,2);
-		g.addEdge(1,3);
-		g.addEdge(2,1);
-		g.addEdge(2,3);
-		g.addEdge(3,1);
-		
-		g.addEdge(1,4);
-		g.addEdge(5,4);
-		
-		g.addEdge(5,7);
-		g.addEdge(6,5);
-		g.addEdge(7,6);
-		
-		g.addEdge(7,8);
-		g.addEdge(8,2);
-		
-		StrongComponents<Integer> sc = new StrongComponents<>(g);
-		
-		System.out.println(sc.numberOfComp());  // 4
-		
-		System.out.println(sc);
-			// Component 0: 5, 6, 7, 
-        	// Component 1: 8, 
-            // Component 2: 1, 2, 3, 
-            // Component 3: 4, 
-	}
-	
-	private static void test2() throws FileNotFoundException {
-		DirectedGraph<Integer> g = readDirectedGraph(new File("mediumDG.txt"));
-		System.out.println(g.getNumberOfVertexes());
-		System.out.println(g.getNumberOfEdges());
-		System.out.println(g);
-		
-		System.out.println("");
-		
-		StrongComponents<Integer> sc = new StrongComponents<>(g);
-		System.out.println(sc.numberOfComp());  // 10
-		System.out.println(sc);
-		
-	}
-	
-	public static void main(String[] args) throws FileNotFoundException {
-		test1();
-		test2();
-	}
+    /**
+     * Ermittelt alle strengen Komponenten mit
+     * dem Kosaraju-Sharir Algorithmus.
+     *
+     * @param g gerichteter Graph.
+     */
+    public StrongComponents(DirectedGraph<V> g) {
+        mygraph = g;
+        init();
+    }
+
+    /**
+     * Liest einen gerichteten Graphen von einer Datei ein.
+     *
+     * @param fn Dateiname.
+     * @return gerichteter Graph.
+     * @throws FileNotFoundException when file is not found
+     */
+    public static DirectedGraph<Integer> readDirectedGraph(File fn) throws FileNotFoundException {
+        DirectedGraph<Integer> g = new AdjacencyListDirectedGraph<>();
+        Scanner sc = new Scanner(fn);
+        sc.nextInt();
+        sc.nextInt();
+        while (sc.hasNextInt()) {
+            int v = sc.nextInt();
+            int w = sc.nextInt();
+            g.addEdge(v, w);
+        }
+        return g;
+    }
+
+    private static void test1() {
+        DirectedGraph<Integer> g = new AdjacencyListDirectedGraph<>();
+        g.addEdge(1, 2);
+        g.addEdge(1, 3);
+        g.addEdge(2, 1);
+        g.addEdge(2, 3);
+        g.addEdge(3, 1);
+
+        g.addEdge(1, 4);
+        g.addEdge(5, 4);
+
+        g.addEdge(5, 7);
+        g.addEdge(6, 5);
+        g.addEdge(7, 6);
+
+        g.addEdge(7, 8);
+        g.addEdge(8, 2);
+
+        StrongComponents<Integer> sc = new StrongComponents<>(g);
+
+        System.out.println(sc.numberOfComp());  // 4
+
+        System.out.println(sc);
+        // Component 0: 5, 6, 7,
+        // Component 1: 8,
+        // Component 2: 1, 2, 3,
+        // Component 3: 4,
+    }
+
+    private static void test2() throws FileNotFoundException {
+        DirectedGraph<Integer> g = readDirectedGraph(new File("mediumDG.txt"));
+        System.out.println(g.getNumberOfVertexes());
+        System.out.println(g.getNumberOfEdges());
+        System.out.println(g);
+
+        System.out.println();
+
+        StrongComponents<Integer> sc = new StrongComponents<>(g);
+        System.out.println(sc.numberOfComp());  // 10
+        System.out.println(sc);
+
+    }
+
+    //Jeder Knoten wird in der reverseOrder Reihenfolge besucht
+
+    public static void main(String[] args) throws FileNotFoundException {
+        test1();
+        test2();
+    }
+
+    private List<V> reverseOrder(DirectedGraph<V> g) {
+        DepthFirstOrder<V> dfs = new DepthFirstOrder<>(g);
+        List<V> reverseOrder = new LinkedList<>(dfs.postOrder());
+        Collections.reverse(reverseOrder);
+//		System.out.println(reverseOrder);
+        return Collections.unmodifiableList(reverseOrder);
+    }
+
+    private DirectedGraph<V> reverseGraph(DirectedGraph<V> g) {
+        return g.invert();
+    }
+
+    public void init() {
+        List<V> reverseList = new LinkedList<>(reverseOrder(mygraph)); //1
+        DirectedGraph<V> reverseGraph = reverseGraph(mygraph); //2
+
+        visitPost(reverseList, reverseGraph);
+    }
+
+    private void visitPost(List<V> reihenfolge, DirectedGraph<V> g) {
+        Set<V> besucht = new TreeSet<>();
+        Queue<V> tree = new LinkedList<>();
+
+        int compCounter = 0;
+        for (V vertexes : reihenfolge) {
+            if (!besucht.contains(vertexes)) {
+                besucht.addAll(visitPost(vertexes, besucht, g, tree));
+                Iterator<V> it = tree.iterator();
+                if (!comp.containsKey(compCounter))
+                    comp.put(compCounter, new TreeSet<>());
+                while (it.hasNext())
+                    if (comp.get(compCounter).add(it.next())) ;
+                compCounter++;
+                tree.clear();
+            }
+        }
+    }
+
+    private Set<V> visitPost(V v, Set<V> besucht, DirectedGraph<V> g, Queue<V> tree) {
+
+        besucht.add(v);
+
+        for (V w : g.getSuccessorVertexSet(v)) {
+            if (!besucht.contains(w)) {
+                visitPost(w, besucht, g, tree);
+            }
+        }
+        tree.add(v);
+        return besucht;
+    }
+
+    /**
+     * @return Anzahl der strengen Komponeneten.
+     */
+    public int numberOfComp() {
+        return comp.size();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+        int compCounter = 0;
+        while (compCounter < comp.size()) {
+            str.append("Component ").append(compCounter).append(": ");
+            for (V v : comp.get(compCounter)) str.append(v).append(", ");
+            compCounter++;
+            str.append("\n");
+        }
+        return str.toString();
+    }
 }
