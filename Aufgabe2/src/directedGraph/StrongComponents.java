@@ -112,7 +112,6 @@ public class StrongComponents<V> {
         DepthFirstOrder<V> dfs = new DepthFirstOrder<>(g);
         List<V> reverseOrder = new LinkedList<>(dfs.postOrder());
         Collections.reverse(reverseOrder);
-//		System.out.println(reverseOrder);
         return Collections.unmodifiableList(reverseOrder);
     }
 

@@ -25,8 +25,7 @@ public class DepthFirstOrder<V> {
      */
     public DepthFirstOrder(DirectedGraph<V> g) {
         myGraph = g;
-        visitPre();
-        visitPost();
+        visitPrePost();
     }
 
     public static void main(String[] args) {
@@ -74,12 +73,12 @@ public class DepthFirstOrder<V> {
      * wenn der Graph aus zwei Zusammenhangskomponenten besteht. Dann ist es nämlich schwierig,
      * durch einfache rekursion auf den anderen Graphen zu gelangen
      */
-    private void visitPre() {
+    private void visitPrePost() {
         Set<V> besucht = new TreeSet<>();
         int noTree = 0;
         for (V vertexes : myGraph.getVertexSet())
             if (!besucht.contains(vertexes)) {
-                besucht.addAll(visitPre(vertexes, besucht));
+                besucht.addAll(visitPrePost(vertexes, besucht));
                 noTree++;
             }
         numberOfDFTrees = noTree;
@@ -91,37 +90,19 @@ public class DepthFirstOrder<V> {
      * Die Iteration findet über die Nachfolgerknoten von v statt. Durch Rekursion wird damit dann sichergestellt,
      * dass alle diese besucht werden. Durch das Set kann auch sichergestellt werden, dass die Knoten nicht noch einmal besucht werden.
      */
-    private Set<V> visitPre(V v, Set<V> besucht) {
+    private Set<V> visitPrePost(V v, Set<V> besucht) {
         besucht.add(v);
 
         preOrder.add(v);
 
         for (V w : myGraph.getSuccessorVertexSet(v)) {
             if (!besucht.contains(w))
-                visitPre(w, besucht);
-        }
-        return besucht;
-    }
-
-    private void visitPost() {
-        Set<V> besucht = new TreeSet<>();
-        for (V vertexes : myGraph.getVertexSet())
-            if (!besucht.contains(vertexes))
-                besucht.addAll(visitPost(vertexes, besucht));
-    }
-
-    private Set<V> visitPost(V v, Set<V> besucht) {
-
-        besucht.add(v);
-
-        for (V w : myGraph.getSuccessorVertexSet(v)) {
-            if (!besucht.contains(w)) {
-                visitPost(w, besucht);
-            }
+                visitPrePost(w, besucht);
         }
         postOrder.add(v);
         return besucht;
     }
+
 
     /**
      * @return Anzahl der Bäume des Tiefensuchwalds.
