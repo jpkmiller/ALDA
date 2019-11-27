@@ -170,6 +170,10 @@ public class StrongComponents<V> {
     public String toString() {
         StringBuilder str = new StringBuilder();
         int compCounter = 0;
+        for (var e : comp.getEntrySet()) {
+            str.append("Component ").append(e.getKey()).append(": ").append(e.getValue());
+        }
+        
         while (compCounter < comp.size()) {
             str.append("Component ").append(compCounter).append(": ");
             for (V v : comp.get(compCounter)) str.append(v).append(", ");
