@@ -7,6 +7,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+import static java.util.Collections.reverse;
+import static java.util.Collections.unmodifiableList;
+
 /**
  * Klasse für Bestimmung aller strengen Komponenten.
  * Kosaraju-Sharir Algorithmus.
@@ -35,7 +38,7 @@ public class StrongComponents<V> {
      */
     public StrongComponents(DirectedGraph<V> g) {
         mygraph = g;
-        init();
+        visitPost(new LinkedList<>(reverseOrder()), mygraph.invert());
     }
 
     /**
@@ -108,52 +111,36 @@ public class StrongComponents<V> {
         test2();
     }
 
-    private List<V> reverseOrder(DirectedGraph<V> g) {
-        DepthFirstOrder<V> dfs = new DepthFirstOrder<>(g);
-        List<V> reverseOrder = new LinkedList<>(dfs.postOrder());
-        Collections.reverse(reverseOrder);
-        return Collections.unmodifiableList(reverseOrder);
+    private List<V> reverseOrder() {
+        List<V> reverseOrder = new LinkedList<>(new DepthFirstOrder<>(mygraph).postOrder());
+        reverse(reverseOrder);
+        return unmodifiableList(reverseOrder);
     }
 
-    private DirectedGraph<V> reverseGraph(DirectedGraph<V> g) {
-        return g.invert();
-    }
-
-    public void init() {
-        List<V> reverseList = new LinkedList<>(reverseOrder(mygraph)); //1
-        DirectedGraph<V> reverseGraph = reverseGraph(mygraph); //2
-
-        visitPost(reverseList, reverseGraph);
-    }
 
     private void visitPost(List<V> reihenfolge, DirectedGraph<V> g) {
         Set<V> besucht = new TreeSet<>();
         Queue<V> tree = new LinkedList<>();
 
         int compCounter = 0;
-        for (V vertexes : reihenfolge) {
+        for (V vertexes : reihenfolge)
             if (!besucht.contains(vertexes)) {
                 besucht.addAll(visitPost(vertexes, besucht, g, tree));
                 Iterator<V> it = tree.iterator();
                 if (!comp.containsKey(compCounter))
                     comp.put(compCounter, new TreeSet<>());
                 while (it.hasNext())
-                    if (comp.get(compCounter).add(it.next())) ;
+                    comp.get(compCounter).add(it.next());
                 compCounter++;
                 tree.clear();
             }
-        }
     }
 
     private Set<V> visitPost(V v, Set<V> besucht, DirectedGraph<V> g, Queue<V> tree) {
-
         besucht.add(v);
-
-        for (V w : g.getSuccessorVertexSet(v)) {
-            if (!besucht.contains(w)) {
+        for (V w : g.getSuccessorVertexSet(v))
+            if (!besucht.contains(w))
                 visitPost(w, besucht, g, tree);
-            }
-        }
         tree.add(v);
         return besucht;
     }
@@ -168,13 +155,7 @@ public class StrongComponents<V> {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
-        int compCounter = 0;
-        while (compCounter < comp.size()) {
-            str.append("Component ").append(compCounter).append(": ");
-            for (V v : comp.get(compCounter)) str.append(v).append(", ");
-            compCounter++;
-            str.append("\n");
-        }
+        comp.forEach((key, value) -> str.append("Component ").append(key).append(": ").append(value.toString(), 1, value.toString().length() - 1).append("\n"));
         return str.toString();
     }
 }

@@ -57,11 +57,7 @@ public class TopologicalSort<V> {
             }
         }
 
-
-        if (ts.size() != myGraph.getNumberOfVertexes())
-            return null;
-
-        return Collections.unmodifiableList(ts);
+        return ts.size() != myGraph.getNumberOfVertexes() ? null : Collections.unmodifiableList(ts);
     }
 
 

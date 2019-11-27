@@ -219,11 +219,8 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
     @Override
     public DirectedGraph<V> invert() {
         DirectedGraph<V> invGraph = new AdjacencyListDirectedGraph<>();
-
         for (Map.Entry<V, Map<V, Double>> e : succ.entrySet())
-            for (var succs : e.getValue().entrySet())
-                invGraph.addEdge(succs.getKey(), e.getKey(), succs.getValue());
-
+            e.getValue().forEach((key, value) -> invGraph.addEdge(key, e.getKey(), value));
         return invGraph;
     }
 
@@ -232,8 +229,7 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
     public String toString() {
         StringBuilder str = new StringBuilder();
         for (var e : succ.entrySet())
-            for (var succs : e.getValue().entrySet())
-                str.append(e.getKey()).append(" --> ").append(succs.getKey()).append(" weight = ").append(succs.getValue()).append("\n");
+            e.getValue().forEach((key, value) -> str.append(e.getKey()).append(" --> ").append(key).append(" weight = ").append(value).append("\n"));
         return str.toString();
     }
 
