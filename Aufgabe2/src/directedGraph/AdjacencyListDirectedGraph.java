@@ -60,10 +60,10 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
      */
     @Override
     public boolean addEdge(V v, V w, double weight) {
-        if (succ.get(v) == null) this.addVertex(v);
-        if (pred.get(w) == null) this.addVertex(w);
+        this.addVertex(v);
+        this.addVertex(w);
 
-        if (succ.get(v).containsKey(w) && pred.get(w).containsKey(v)) {
+        if (succ.get(v).containsKey(w)) {
             succ.get(v).put(w, weight);
             pred.get(w).put(v, weight);
             return false;
@@ -204,10 +204,10 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
      */
     @Override
     public int getNumberOfEdges() {
-        int sum = 0;
-        for (Map.Entry<V, Map<V, Double>> s : succ.entrySet())
-            sum += s.getValue().size();
-        return sum;
+//        int sum = 0;
+//        for (Map.Entry<V, Map<V, Double>> s : succ.entrySet())
+//            sum += s.getValue().size();
+        return numberEdge;
     }
 
     /**

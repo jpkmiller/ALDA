@@ -120,29 +120,20 @@ public class StrongComponents<V> {
 
     private void visitPost(List<V> reihenfolge, DirectedGraph<V> g) {
         Set<V> besucht = new TreeSet<>();
-        Queue<V> tree = new LinkedList<>();
 
         int compCounter = 0;
         for (V vertexes : reihenfolge)
-            if (!besucht.contains(vertexes)) {
-                besucht.addAll(visitPost(vertexes, besucht, g, tree));
-                Iterator<V> it = tree.iterator();
-                if (!comp.containsKey(compCounter))
-                    comp.put(compCounter, new TreeSet<>());
-                while (it.hasNext())
-                    comp.get(compCounter).add(it.next());
-                compCounter++;
-                tree.clear();
-            }
+            if (!besucht.contains(vertexes))
+                comp.put(compCounter++, visitPost(vertexes, besucht, g, new TreeSet<>()));
     }
 
-    private Set<V> visitPost(V v, Set<V> besucht, DirectedGraph<V> g, Queue<V> tree) {
+    private Set<V> visitPost(V v, Set<V> besucht, DirectedGraph<V> g, Set<V> components) {
         besucht.add(v);
         for (V w : g.getSuccessorVertexSet(v))
             if (!besucht.contains(w))
-                visitPost(w, besucht, g, tree);
-        tree.add(v);
-        return besucht;
+                visitPost(w, besucht, g, components);
+        components.add(v);
+        return components;
     }
 
     /**
