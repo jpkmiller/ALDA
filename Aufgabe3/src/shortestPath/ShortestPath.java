@@ -8,7 +8,7 @@ import graph.DirectedGraph;
 import sim.SYSimulation;
 
 import java.util.*;
-// ...
+
 
 /**
  * Kürzeste Wege in Graphen mit A*- und Dijkstra-Verfahren.
@@ -79,7 +79,7 @@ public class ShortestPath<V> {
         end = g;
 
         for (V v : myGraph.getVertexSet()) {
-            dist.put(v, Double.MAX_VALUE); //Distanz zu Start -> Start nicht relevant => infinity
+            dist.put(v, (double) Integer.MAX_VALUE); //Distanz zu Start -> Start nicht relevant => infinity
             pred.put(v, null); //Vorgänger -> Vorgänger nicht bekannt => null
         }
 
@@ -87,11 +87,23 @@ public class ShortestPath<V> {
         kandidatenListe.add(Map.entry(s, dist.get(s)));
 
         while (!kandidatenListe.isEmpty()) {
-            Collections.sort(kandidatenListe, Map.Entry.comparingByValue(Comparator.reverseOrder()));
-            Map.Entry<V, Double> min = kandidatenListe.poll();
+            Map.Entry<V, Double> min;
+            if (myHeuristic != null) {
+                min = kandidatenListe.stream()
+                        .min(Comparator.comparing(o -> o.getValue() + myHeuristic.estimatedCost(o.getKey(), g)))
+                        .get();
+                kandidatenListe.remove(min);
+            } else {
+                System.out.println(kandidatenListe);
+                Collections.sort(kandidatenListe, Map.Entry.comparingByValue(Comparator.reverseOrder()));
+                min = kandidatenListe.poll();
+            }
+
             System.out.printf("Besuche Knoten %s mit d = %.2f\n", min.getKey(), dist.get(min.getKey()));
+            if (min.getKey().equals(g)) return;
+
             for (V w : myGraph.getSuccessorVertexSet(min.getKey())) {
-                if (dist.get(w).equals(Double.MAX_VALUE))
+                if (dist.get(w).equals((double) Integer.MAX_VALUE))
                     kandidatenListe.add(Map.entry(w, dist.get(w)));
                 if (dist.get(min.getKey()) + myGraph.getWeight(min.getKey(), w) < dist.get(w)) {
                     pred.put(w, min.getKey());
@@ -110,8 +122,8 @@ public class ShortestPath<V> {
      * @throws IllegalArgumentException falls kein kürzester Weg berechnet wurde.
      */
     public List<V> getShortestPath() {
-        V next = end;
         List<V> shortestPath = new LinkedList<>();
+        V next = end;
         do {
             shortestPath.add(next);
             next = pred.get(next);
@@ -129,7 +141,7 @@ public class ShortestPath<V> {
      * @throws IllegalArgumentException falls kein kürzester Weg berechnet wurde.
      */
     public double getDistance() {
-        return dist.values().stream().mapToDouble(v -> v).sum();
+        return dist.get(end);
     }
 
 }
