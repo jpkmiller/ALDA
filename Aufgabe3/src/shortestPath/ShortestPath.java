@@ -94,8 +94,8 @@ public class ShortestPath<V> {
                         .get();
                 kandidatenListe.remove(min);
             } else {
-                System.out.println(kandidatenListe);
-                Collections.sort(kandidatenListe, Map.Entry.comparingByValue(Comparator.reverseOrder()));
+//                System.out.println(kandidatenListe);
+                kandidatenListe.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
                 min = kandidatenListe.poll();
             }
 
