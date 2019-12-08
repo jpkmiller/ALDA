@@ -74,34 +74,25 @@ public class ShortestPath<V> {
      * @param g Zielknoten
      */
     public void searchShortestPath(V s, V g) {
-        Queue<V> kandidatenListe = new LinkedList<>();
+        LinkedList<Map.Entry<V, Double>> kandidatenListe = new LinkedList<>();
         start = s;
         end = g;
 
         for (V v : myGraph.getVertexSet()) {
-            dist.put(v, null); //Distanz zu Start -> Start nicht relevant => null
+            dist.put(v, Double.MAX_VALUE); //Distanz zu Start -> Start nicht relevant => infinity
             pred.put(v, null); //Vorgänger -> Vorgänger nicht bekannt => null
         }
 
         dist.put(s, 0.0);
-        kandidatenListe.add(s);
-
-//        if (o1.getValue() + myHeuristic.estimatedCost(o1.getKey(), g) > o2.getValue() + myHeuristic.estimatedCost(o2.getKey(), g))
-//            return 1;
-//        else if (o1.getValue() + myHeuristic.estimatedCost(o1.getKey(), g) < o2.getValue() + myHeuristic.estimatedCost(o2.getKey(), g))
-//            return -1;
-//        else return 0;
+        kandidatenListe.add(Map.entry(s, dist.get(s)));
 
         while (!kandidatenListe.isEmpty()) {
-            Map.Entry<V, Double> min = dist.entrySet()
-                    .parallelStream()
-                    .min(Comparator.comparingDouble(o -> o.getValue() + myHeuristic.estimatedCost(o.getKey(), g)))
-                    .get();
-            kandidatenListe.remove(min);
-            if (min.equals(g)) return;
+            Collections.sort(kandidatenListe, Map.Entry.comparingByValue(Comparator.reverseOrder()));
+            Map.Entry<V, Double> min = kandidatenListe.poll();
+            System.out.printf("Besuche Knoten %s mit d = %.2f\n", min.getKey(), dist.get(min.getKey()));
             for (V w : myGraph.getSuccessorVertexSet(min.getKey())) {
-                if (dist.get(w) == null)
-                    kandidatenListe.add(w);
+                if (dist.get(w).equals(Double.MAX_VALUE))
+                    kandidatenListe.add(Map.entry(w, dist.get(w)));
                 if (dist.get(min.getKey()) + myGraph.getWeight(min.getKey(), w) < dist.get(w)) {
                     pred.put(w, min.getKey());
                     dist.put(w, dist.get(min.getKey()) + myGraph.getWeight(min.getKey(), w));
@@ -119,8 +110,14 @@ public class ShortestPath<V> {
      * @throws IllegalArgumentException falls kein kürzester Weg berechnet wurde.
      */
     public List<V> getShortestPath() {
+        V next = end;
         List<V> shortestPath = new LinkedList<>();
-        for (V v : dist.keySet()) shortestPath.add(v);
+        do {
+            shortestPath.add(next);
+            next = pred.get(next);
+        } while (next != start);
+        shortestPath.add(next);
+        Collections.reverse(shortestPath);
         return Collections.unmodifiableList(shortestPath);
     }
 

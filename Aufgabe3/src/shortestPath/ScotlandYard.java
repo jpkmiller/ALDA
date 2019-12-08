@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 
 /**
@@ -136,11 +137,14 @@ class ScotlandYardHeuristic implements Heuristic<Integer> {
 	private Map<Integer, Point> coord; // Ordnet jedem Knoten seine Koordinaten zu
 
 	public ScotlandYardHeuristic() throws FileNotFoundException {
-		// ...
+		coord = new TreeMap<>();
 	}
 
 	public double estimatedCost(Integer u, Integer v) {
-		// ...
+		Point p1 = coord.get(u);
+		Point p2 = coord.get(v);
+
+		return Math.sqrt(Math.pow(p1.x - p2.x, 2) - Math.pow(p1.y - p2.y, 2));
 	}
 
 	private static class Point {
