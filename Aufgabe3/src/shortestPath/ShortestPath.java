@@ -74,7 +74,7 @@ public class ShortestPath<V> {
      * @param g Zielknoten
      */
     public void searchShortestPath(V s, V g) {
-        LinkedList<Map.Entry<V, Double>> kandidatenListe = new LinkedList<>();
+        Queue<V> kandidatenListe = new PriorityQueue<>(Comparator.comparing(o -> dist.get(o)));
         start = s;
         end = g;
 
@@ -84,30 +84,28 @@ public class ShortestPath<V> {
         }
 
         dist.put(s, 0.0);
-        kandidatenListe.add(Map.entry(s, dist.get(s)));
+        kandidatenListe.add(s);
 
         while (!kandidatenListe.isEmpty()) {
-            Map.Entry<V, Double> min;
+            V min;
             if (myHeuristic != null) {
                 min = kandidatenListe.stream()
-                        .min(Comparator.comparing(o -> o.getValue() + myHeuristic.estimatedCost(o.getKey(), g)))
+                        .min(Comparator.comparing(o -> dist.get(o) + myHeuristic.estimatedCost(o, g)))
                         .get();
                 kandidatenListe.remove(min);
             } else {
-                System.out.println(kandidatenListe);
-                Collections.sort(kandidatenListe, Map.Entry.comparingByValue(Comparator.reverseOrder()));
                 min = kandidatenListe.poll();
             }
 
-            System.out.printf("Besuche Knoten %s mit d = %.2f\n", min.getKey(), dist.get(min.getKey()));
-            if (min.getKey().equals(g)) return;
+            System.out.printf("Besuche Knoten %s mit d = %.2f\n", min, dist.get(min));
+            if (min.equals(g)) return;
 
-            for (V w : myGraph.getSuccessorVertexSet(min.getKey())) {
+            for (V w : myGraph.getSuccessorVertexSet(min)) {
                 if (dist.get(w).equals((double) Integer.MAX_VALUE))
-                    kandidatenListe.add(Map.entry(w, dist.get(w)));
-                if (dist.get(min.getKey()) + myGraph.getWeight(min.getKey(), w) < dist.get(w)) {
-                    pred.put(w, min.getKey());
-                    dist.put(w, dist.get(min.getKey()) + myGraph.getWeight(min.getKey(), w));
+                    kandidatenListe.add(w);
+                if (dist.get(min) + myGraph.getWeight(min, w) < dist.get(w)) {
+                    pred.put(w, min);
+                    dist.put(w, dist.get(min) + myGraph.getWeight(min, w));
                 }
             }
         }
