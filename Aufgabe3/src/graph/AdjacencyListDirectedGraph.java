@@ -1,7 +1,7 @@
 // O. Bittel;
 // 19.03.2018
 
-package directedGraph;
+package graph;
 
 import java.util.Collections;
 import java.util.Map;
