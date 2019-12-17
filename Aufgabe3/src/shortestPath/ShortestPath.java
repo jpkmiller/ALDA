@@ -97,7 +97,10 @@ public class ShortestPath<V> {
                 min = kandidatenListe.poll();
             }
 
-            System.out.printf("Besuche Knoten %s mit d = %.2f\n", min, dist.get(min));
+            System.out.printf("Besuche Knoten %s mit d = %.2f", min, dist.get(min));
+            if (myHeuristic != null)
+                System.out.printf(" -> %.2f", myHeuristic.estimatedCost(min, g));
+            System.out.print("\n");
             if (min.equals(g)) return;
 
             for (V w : myGraph.getSuccessorVertexSet(min)) {

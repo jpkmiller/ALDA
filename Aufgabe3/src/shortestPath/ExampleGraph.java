@@ -25,7 +25,7 @@ public class ExampleGraph {
     // Gerichteter Graph:
     private static DirectedGraph<Integer> g = new AdjacencyListDirectedGraph<>();
     // Heuristik:
-    private static Heuristic<Integer> heuristic = (v, w) -> dist(v, w);
+    private static Heuristic<Integer> heuristic = ExampleGraph::dist;
 
     private static double dist(int v, int w) {
         Point vp = coords.get(v);
