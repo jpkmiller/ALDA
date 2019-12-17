@@ -7,6 +7,9 @@ package shortestPath;
 import graph.DirectedGraph;
 import sim.SYSimulation;
 
+import java.awt.*;
+import java.util.List;
+import java.util.Queue;
 import java.util.*;
 
 
@@ -64,6 +67,34 @@ public class ShortestPath<V> {
         this.sim = sim;
     }
 
+    public void searchShortestPath(V start, V g) {
+        searchShortestPathMain(start, g);
+        if (sim != null) simulateShortestPath();
+    }
+
+    private void simulateShortestPath() {
+        sim.startSequence("Kürzester Weg mit Dijkstra und A*");
+        List<V> kuerzesterWeg = getShortestPath();
+        Iterator<V> iterator = kuerzesterWeg.iterator();
+        V nextStation = iterator.next();
+        while (iterator.hasNext()) {
+            V thisStation = nextStation;
+            nextStation = iterator.next();
+            visitStation(thisStation);
+            driveToStation(thisStation, nextStation);
+        }
+        visitStation(nextStation);
+    }
+
+    private void visitStation(V thisStation) {
+        if (myHeuristic != null) sim.visitStation((int) thisStation, Color.GREEN);
+        else sim.visitStation((int) thisStation, Color.BLUE);
+    }
+
+    private void driveToStation(V thisStation, V nextStation) {
+        sim.drive((int) thisStation, (int) nextStation);
+    }
+
     /**
      * Sucht den kürzesten Weg von Starknoten s zum Zielknoten g.
      * <p>
@@ -73,7 +104,7 @@ public class ShortestPath<V> {
      * @param s Startknoten
      * @param g Zielknoten
      */
-    public void searchShortestPath(V s, V g) {
+    public void searchShortestPathMain(V s, V g) {
         Queue<V> kandidatenListe = new PriorityQueue<>(Comparator.comparing(o -> dist.get(o)));
         start = s;
         end = g;
@@ -97,7 +128,10 @@ public class ShortestPath<V> {
                 min = kandidatenListe.poll();
             }
 
-            System.out.printf("Besuche Knoten %s mit d = %.2f\n", min, dist.get(min));
+            System.out.printf("Besuche Knoten %s mit d = %.2f", min, dist.get(min));
+            if (myHeuristic != null)
+                System.out.printf(" -> %.2f", myHeuristic.estimatedCost(min, g));
+            System.out.print("\n");
             if (min.equals(g)) return;
 
             for (V w : myGraph.getSuccessorVertexSet(min)) {

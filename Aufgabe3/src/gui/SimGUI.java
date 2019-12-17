@@ -41,10 +41,10 @@ public class SimGUI extends JFrame implements Runnable, ActionListener, ChangeLi
     private volatile int SLEEP_TIME;
 
     public SimGUI() throws IOException {
-        stations = new TreeMap<Integer, Station>();
-        readStationsFromFile(this.getClass().getResource("stations.txt").getPath());
-        mapEntries = new Vector<MapEntry>();
-        mapEntriesReplay = new Vector<MapEntry>();
+        stations = new TreeMap<>();
+        readStationsFromFile("stations.txt");
+        mapEntries = new Vector<>();
+        mapEntriesReplay = new Vector<>();
         lock = new Object();
         simState = seqStopped;
         userState = seqStopped;

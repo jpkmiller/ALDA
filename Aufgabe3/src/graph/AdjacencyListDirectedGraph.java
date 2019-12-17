@@ -68,8 +68,8 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
             pred.get(w).put(v, weight);
             return false;
         } else {
-            succ.get(v).putIfAbsent(w, weight);
-            pred.get(w).putIfAbsent(v, weight);
+            succ.get(v).put(w, weight);
+            pred.get(w).put(v, weight);
         }
         numberEdge++;
         return true;
@@ -111,7 +111,7 @@ public class AdjacencyListDirectedGraph<V extends Comparable<? super V>> impleme
      */
     @Override
     public boolean containsEdge(V v, V w) {
-        return succ.get(v).containsKey(w);
+        return succ.get(v) != null && succ.get(v).get(w) != null;
     }
 
     /**
