@@ -107,8 +107,8 @@ public class ScotlandYard {
 
         DirectedGraph<Integer> syGraph = getGraph();
 
-//        Heuristic<Integer> syHeuristic = null; // Dijkstra
-        Heuristic<Integer> syHeuristic = getHeuristic(); // A*
+        Heuristic<Integer> syHeuristic = null; // Dijkstra
+//        Heuristic<Integer> syHeuristic = getHeuristic(); // A*
 
         ShortestPath<Integer> sySp = new ShortestPath<>(syGraph, syHeuristic);
 
@@ -131,7 +131,6 @@ public class ScotlandYard {
             return;
         }
         sySp.setSimulator(sim);
-        sim.startSequence("Shortest path from 1 to 173");
 
         sySp.searchShortestPath(65, 157); // 9.0
         sySp.searchShortestPath(1, 175); //25.0
@@ -141,8 +140,10 @@ public class ScotlandYard {
         // bei 1/30 funktioniert es.
 
         System.out.println("Distance = " + sySp.getDistance());
+
         List<Integer> sp = sySp.getShortestPath();
 
+        sim.startSequence("Kürzester weg von 1 nach 173");
         int a = -1;
         for (int b : sp) {
             if (a != -1)
@@ -152,8 +153,6 @@ public class ScotlandYard {
         }
 
         sim.stopSequence();
-
-
     }
 
 }

@@ -30,6 +30,7 @@ public class ShortestPath<V> {
     Heuristic<V> myHeuristic;
     V start;
     V end;
+    private LinkedList<V> weg;
 
 
     /**
@@ -46,6 +47,7 @@ public class ShortestPath<V> {
     public ShortestPath(DirectedGraph<V> g, Heuristic<V> h) {
         dist = new TreeMap<>();
         pred = new TreeMap<>();
+        weg = new LinkedList<>();
         myGraph = g;
         myHeuristic = h;
     }
@@ -73,9 +75,8 @@ public class ShortestPath<V> {
     }
 
     private void simulateShortestPath() {
-        sim.startSequence("Kürzester Weg mit Dijkstra und A*");
-        List<V> kuerzesterWeg = getShortestPath();
-        Iterator<V> iterator = kuerzesterWeg.iterator();
+        sim.startSequence("Kürzester Weg von " + start + " nach " + end);
+        Iterator<V> iterator = weg.iterator();
         V nextStation = iterator.next();
         while (iterator.hasNext()) {
             V thisStation = nextStation;
@@ -84,6 +85,8 @@ public class ShortestPath<V> {
             driveToStation(thisStation, nextStation);
         }
         visitStation(nextStation);
+        weg.clear();
+        sim.stopSequence();
     }
 
     private void visitStation(V thisStation) {
@@ -129,10 +132,12 @@ public class ShortestPath<V> {
             }
 
             System.out.printf("Besuche Knoten %s mit d = %.2f", min, dist.get(min));
-            if (myHeuristic != null)
+            if (myHeuristic != null) {
                 System.out.printf(" -> %.2f", myHeuristic.estimatedCost(min, g));
+            }
             System.out.print("\n");
             if (min.equals(g)) return;
+            weg.add(min);
 
             for (V w : myGraph.getSuccessorVertexSet(min)) {
                 if (dist.get(w).equals((double) Integer.MAX_VALUE))
