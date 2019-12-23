@@ -107,14 +107,13 @@ public class ScotlandYard {
 
         DirectedGraph<Integer> syGraph = getGraph();
 
-        Heuristic<Integer> syHeuristic = null; // Dijkstra
-//        Heuristic<Integer> syHeuristic = getHeuristic(); // A*
+//        Heuristic<Integer> syHeuristic = null; // Dijkstra
+        Heuristic<Integer> syHeuristic = getHeuristic(); // A*
 
-        ShortestPath<Integer> sySp = new ShortestPath<>(syGraph, syHeuristic);
+        ShortestPath<Integer> sySp = new ShortestPath<Integer>(syGraph, syHeuristic);
 
         sySp.searchShortestPath(65, 157);
         System.out.println("Distance = " + sySp.getDistance()); // 9.0
-        System.out.println("Shortest Path = " + sySp.getShortestPath());
 
         sySp.searchShortestPath(1, 175);
         System.out.println("Distance = " + sySp.getDistance()); // 25.0
@@ -131,19 +130,18 @@ public class ScotlandYard {
             return;
         }
         sySp.setSimulator(sim);
+        sim.startSequence("Shortest path from 1 to 173");
 
-        sySp.searchShortestPath(65, 157); // 9.0
-        sySp.searchShortestPath(1, 175); //25.0
+        //sySp.searchShortestPath(65,157); // 9.0
+        //sySp.searchShortestPath(1,175); //25.0
 
         sySp.searchShortestPath(1, 173); //22.0
         // bei Heuristik-Faktor von 1/10 wird nicht der optimale Pfad produziert.
         // bei 1/30 funktioniert es.
 
         System.out.println("Distance = " + sySp.getDistance());
-
         List<Integer> sp = sySp.getShortestPath();
 
-        sim.startSequence("Kürzester weg von 1 nach 173");
         int a = -1;
         for (int b : sp) {
             if (a != -1)
@@ -153,6 +151,8 @@ public class ScotlandYard {
         }
 
         sim.stopSequence();
+
+
     }
 
 }
@@ -180,8 +180,9 @@ class ScotlandYardHeuristic implements Heuristic<Integer> {
         Point p1 = coord.get(u);
         Point p2 = coord.get(v);
 
+        double factor = 1.0/30.0;
 
-        return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+        return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)) * factor;
     }
 
     private static class Point {

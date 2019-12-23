@@ -71,7 +71,7 @@ public class ShortestPath<V> {
 
     public void searchShortestPath(V start, V g) {
         searchShortestPathMain(start, g);
-        if (sim != null) simulateShortestPath();
+//        if (sim != null) simulateShortestPath();
     }
 
     private void simulateShortestPath() {
@@ -131,13 +131,17 @@ public class ShortestPath<V> {
                 min = kandidatenListe.poll();
             }
 
-            System.out.printf("Besuche Knoten %s mit d = %.2f", min, dist.get(min));
-            if (myHeuristic != null) {
-                System.out.printf(" -> %.2f", myHeuristic.estimatedCost(min, g));
-            }
-            System.out.print("\n");
+//            System.out.printf("Besuche Knoten %s mit d = %.2f", min, dist.get(min));
+//            if (myHeuristic != null) {
+//                System.out.printf(" -> %.2f", myHeuristic.estimatedCost(min, g));
+//            }
+//            System.out.print("\n");
             if (min.equals(g)) return;
-            weg.add(min);
+
+            if (sim != null) {
+                Color c = myHeuristic != null ? Color.GREEN : Color.BLUE;
+                sim.visitStation((int) min, c);
+            }
 
             for (V w : myGraph.getSuccessorVertexSet(min)) {
                 if (dist.get(w).equals((double) Integer.MAX_VALUE))
