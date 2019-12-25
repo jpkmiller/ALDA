@@ -78,39 +78,30 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
     // default colors
     private static final Color DEFAULT_PEN_COLOR = BLACK;
     private static final Color DEFAULT_CLEAR_COLOR = WHITE;
-
-    // current pen color
-    private static Color penColor;
-
     // default canvas size is DEFAULT_SIZE-by-DEFAULT_SIZE
     private static final int DEFAULT_SIZE = 512;
-    private static int width = DEFAULT_SIZE;
-    private static int height = DEFAULT_SIZE;
-
     // default pen radius
     private static final double DEFAULT_PEN_RADIUS = 0.002;
-
-    // current pen radius
-    private static double penRadius;
-
-    // show we draw immediately or wait until next show?
-    private static boolean defer = false;
-
     // boundary of drawing canvas, 5% border
     private static final double BORDER = 0.05;
     private static final double DEFAULT_XMIN = 0.0;
     private static final double DEFAULT_XMAX = 1.0;
     private static final double DEFAULT_YMIN = 0.0;
     private static final double DEFAULT_YMAX = 1.0;
+    // default font
+    private static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 16);
+    // current pen color
+    private static Color penColor;
+    private static int width = DEFAULT_SIZE;
+    private static int height = DEFAULT_SIZE;
+    // current pen radius
+    private static double penRadius;
+    // show we draw immediately or wait until next show?
+    private static boolean defer = false;
     private static double xmin, ymin, xmax, ymax;
-
     // for synchronization
     private static Object mouseLock = new Object();
     private static Object keyLock = new Object();
-
-    // default font
-    private static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 16);
-
     // current font
     private static Font font;
 
@@ -955,24 +946,6 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
         }
     }
 
-
-    /**
-     * This method cannot be called directly.
-     */
-    public void actionPerformed(ActionEvent e) {
-        FileDialog chooser = new FileDialog(StdDraw.frame, "Use a .png or .jpg extension", FileDialog.SAVE);
-        chooser.setVisible(true);
-        String filename = chooser.getFile();
-        if (filename != null) {
-            StdDraw.save(chooser.getDirectory() + File.separator + chooser.getFile());
-        }
-    }
-
-
-    /*************************************************************************
-     *  Mouse interactions.
-     *************************************************************************/
-
     /**
      * Is the mouse being pressed?
      *
@@ -983,6 +956,11 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
             return mousePressed;
         }
     }
+
+
+    /*************************************************************************
+     *  Mouse interactions.
+     *************************************************************************/
 
     /**
      * What is the x-coordinate of the mouse?
@@ -1038,94 +1016,6 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
     }
 
     /**
-     * This method cannot be called directly.
-     */
-    public void mousePressed(MouseEvent e) {
-        synchronized (mouseLock) {
-            mouseX = StdDraw.userX(e.getX());
-            mouseY = StdDraw.userY(e.getY());
-            mousePressed = true;
-        }
-    }
-
-    /**
-     * This method cannot be called directly.
-     */
-    public void mouseReleased(MouseEvent e) {
-        synchronized (mouseLock) {
-            mousePressed = false;
-        }
-    }
-
-    /**
-     * This method cannot be called directly.
-     */
-    public void mouseClicked(MouseEvent e) {
-    }
-
-    /**
-     * This method cannot be called directly.
-     */
-    public void mouseMoved(MouseEvent e) {
-        synchronized (mouseLock) {
-            mouseX = StdDraw.userX(e.getX());
-            mouseY = StdDraw.userY(e.getY());
-        }
-    }
-
-
-    /*************************************************************************
-     *  Keyboard interactions.
-     *************************************************************************/
-
-    /**
-     * This method cannot be called directly.
-     */
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    /**
-     * This method cannot be called directly.
-     */
-    public void mouseExited(MouseEvent e) {
-    }
-
-    /**
-     * This method cannot be called directly.
-     */
-    public void mouseDragged(MouseEvent e) {
-        synchronized (mouseLock) {
-            mouseX = StdDraw.userX(e.getX());
-            mouseY = StdDraw.userY(e.getY());
-        }
-    }
-
-
-    /**
-     * This method cannot be called directly.
-     */
-    public void keyTyped(KeyEvent e) {
-        synchronized (keyLock) {
-            keysTyped.addFirst(e.getKeyChar());
-        }
-    }
-
-    /**
-     * This method cannot be called directly.
-     */
-    public void keyPressed(KeyEvent e) {
-        keysDown.add(e.getKeyChar());
-    }
-
-    /**
-     * This method cannot be called directly.
-     */
-    public void keyReleased(KeyEvent e) {
-        keysDown.remove(e.getKeyChar());
-    }
-
-
-    /**
      * Test client.
      */
     public static void main(String[] args) {
@@ -1154,6 +1044,104 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
         // text
         StdDraw.setPenColor(StdDraw.BLACK);
         StdDraw.text(6, 1, "black text");
+    }
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void actionPerformed(ActionEvent e) {
+        FileDialog chooser = new FileDialog(StdDraw.frame, "Use a .png or .jpg extension", FileDialog.SAVE);
+        chooser.setVisible(true);
+        String filename = chooser.getFile();
+        if (filename != null) {
+            StdDraw.save(chooser.getDirectory() + File.separator + chooser.getFile());
+        }
+    }
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void mousePressed(MouseEvent e) {
+        synchronized (mouseLock) {
+            mouseX = StdDraw.userX(e.getX());
+            mouseY = StdDraw.userY(e.getY());
+            mousePressed = true;
+        }
+    }
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void mouseReleased(MouseEvent e) {
+        synchronized (mouseLock) {
+            mousePressed = false;
+        }
+    }
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void mouseClicked(MouseEvent e) {
+    }
+
+
+    /*************************************************************************
+     *  Keyboard interactions.
+     *************************************************************************/
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void mouseMoved(MouseEvent e) {
+        synchronized (mouseLock) {
+            mouseX = StdDraw.userX(e.getX());
+            mouseY = StdDraw.userY(e.getY());
+        }
+    }
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void mouseExited(MouseEvent e) {
+    }
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void mouseDragged(MouseEvent e) {
+        synchronized (mouseLock) {
+            mouseX = StdDraw.userX(e.getX());
+            mouseY = StdDraw.userY(e.getY());
+        }
+    }
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void keyTyped(KeyEvent e) {
+        synchronized (keyLock) {
+            keysTyped.addFirst(e.getKeyChar());
+        }
+    }
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void keyPressed(KeyEvent e) {
+        keysDown.add(e.getKeyChar());
+    }
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void keyReleased(KeyEvent e) {
+        keysDown.remove(e.getKeyChar());
     }
 
 }

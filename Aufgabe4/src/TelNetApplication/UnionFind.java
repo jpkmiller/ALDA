@@ -18,18 +18,6 @@ public class UnionFind {
         size = n;
     }
 
-    /**
-     * Liefert den Repräsentanten der Menge zurück, zu der e gehört.
-     *
-     * @param e ist ein Wert der Menge
-     * @return Präsentant der Menge, zu der e gehört
-     */
-    public int find(int e) throws IllegalArgumentException {
-        while (tree[e] >= 0)
-            e = tree[e];
-        return e;
-    }
-
     public static void main(String[] args) {
         UnionFind unionFind = new UnionFind(10);
 
@@ -72,6 +60,18 @@ public class UnionFind {
         System.out.printf("Repräsentant 1 = %d\n", unionFind.find(0));
         System.out.println(unionFind);
         System.out.println();
+    }
+
+    /**
+     * Liefert den Repräsentanten der Menge zurück, zu der e gehört.
+     *
+     * @param e ist ein Wert der Menge
+     * @return Präsentant der Menge, zu der e gehört
+     */
+    public int find(int e) throws IllegalArgumentException {
+        while (tree[e] >= 0)
+            e = tree[e];
+        return e;
     }
 
     @Override

@@ -1,5 +1,9 @@
 package TelNetApplication;
 
+import draw.StdDraw;
+
+import java.awt.*;
+import java.util.List;
 import java.util.*;
 
 public class TelNet {
@@ -10,15 +14,17 @@ public class TelNet {
     private int size;
 
     public TelNet(int lbg) {
-        telMap = new TreeMap<>();
+        telMap = new HashMap<>();
         optTelNet = new LinkedList<>();
         telQueue = new PriorityQueue<>(Comparator.comparing(x -> x.c));
         this.lbg = lbg;
     }
 
     public static void main(String[] args) {
-        TelNet telNet = new TelNet(10);
-        telNet.generateRandomTelNet(10, 4, 3);
+        TelNet telNet = new TelNet(100);
+        telNet.generateRandomTelNet(1000, 1000, 1000);
+        System.out.println(telNet.computeOptTelNet());
+        telNet.drawOptTelNet(10, 10);
     }
 
     /**
@@ -36,8 +42,26 @@ public class TelNet {
         return true;
     }
 
+    private void addTelVerbindung(int x1, int y1, int x2, int y2) {
+        TelKnoten t1 = new TelKnoten(x1, y1);
+        TelKnoten t2 = new TelKnoten(x2, y2);
+        if (dist(t1, t2) <= lbg) {
+            TelVerbindung telVerbindung = new TelVerbindung(t1, t2, cost(t1, t2));
+            telQueue.add(telVerbindung);
+        }
+    }
+
+    private int dist(TelKnoten a, TelKnoten b) {
+        return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+    }
+
+    private int cost(TelKnoten a, TelKnoten b) {
+        if (dist(a, b) <= lbg) return dist(a, b);
+        else return Integer.MAX_VALUE;
+    }
+
     public boolean computeOptTelNet() {
-        UnionFind forest = new UnionFind(lbg);
+        UnionFind forest = new UnionFind(size());
 
         while (forest.size() != 1 && !telQueue.isEmpty()) {
             TelVerbindung min = telQueue.poll();
@@ -52,18 +76,42 @@ public class TelNet {
         return !telQueue.isEmpty() || forest.size() == 1;
     }
 
-    public void drawOptTelNet(int xMax, int yMax) throws IllegalStateException {
+    double factorize(int xy, int xyMax) {
+        return (1.0 / xyMax) * xy;
+    }
 
+    public void drawOptTelNet(int xMax, int yMax) throws IllegalStateException {
+        StdDraw.setXscale(0, xMax);
+        StdDraw.setYscale(0, yMax);
+
+        for (TelVerbindung v : optTelNet) {
+            System.out.println(v);
+            double x1 = factorize(v.u.x, xMax);
+            double y1 = factorize(v.u.y, xMax);
+            double x2 = factorize(v.v.x, xMax);
+            double y2 = factorize(v.v.y, xMax);
+
+            StdDraw.filledSquare(x1, y1, 0.1);
+            StdDraw.filledSquare(x2, y2, 0.1);
+            StdDraw.setPenColor(Color.BLACK);
+            StdDraw.line(x1, y1, x2, y1);
+            StdDraw.line(x2, y1, x2, y2);
+
+        }
     }
 
     public void generateRandomTelNet(int n, int xMax, int yMax) {
         Random random = new Random();
         for (int i = 0; i < n; i++) {
-            int rx = random.nextInt(xMax);
-            int ry = random.nextInt(yMax);
-            addTelKnoten(rx, ry);
+            int rx1 = random.nextInt(xMax);
+            int ry1 = random.nextInt(yMax);
+            int rx2 = random.nextInt(xMax);
+            int ry2 = random.nextInt(yMax);
+            addTelKnoten(rx1, ry1);
+            addTelKnoten(rx2, ry2);
+            addTelVerbindung(rx1, ry1, rx2, ry2);
+            addTelVerbindung(rx2, rx1, rx1, ry1);
         }
-
     }
 
     public List<TelVerbindung> getOptTelNet() throws IllegalStateException {
@@ -75,7 +123,7 @@ public class TelNet {
     }
 
     public int size() {
-        return optTelNet.size();
+        return size;
     }
 
     @Override
