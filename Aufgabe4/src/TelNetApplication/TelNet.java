@@ -12,19 +12,23 @@ public class TelNet {
     private PriorityQueue<TelVerbindung> telQueue;
     private List<TelVerbindung> optTelNet;
     private int size;
+    public static int xMax = 800;
+    public static int yMax = 800;
+    public static int n = 500;
 
     public TelNet(int lbg) {
         telMap = new HashMap<>();
         optTelNet = new LinkedList<>();
         telQueue = new PriorityQueue<>(Comparator.comparing(x -> x.c));
         this.lbg = lbg;
+        this.size = 0;
     }
 
     public static void main(String[] args) {
         TelNet telNet = new TelNet(100);
-        telNet.generateRandomTelNet(1000, 1000, 1000);
-        System.out.println(telNet.computeOptTelNet());
-        telNet.drawOptTelNet(10, 10);
+        telNet.generateRandomTelNet(n, xMax, yMax);
+        telNet.computeOptTelNet();
+        telNet.drawOptTelNet(xMax, yMax);
     }
 
     /**
@@ -34,7 +38,7 @@ public class TelNet {
      * @param y Koordinate
      * @return true, falls die Koordinate neu ist
      */
-    public boolean addTelKnoten(int x, int y) {
+    private boolean addTelKnoten(int x, int y) {
         TelKnoten knoten = new TelKnoten(x, y);
         if (telMap.containsKey(knoten))
             return false;
@@ -45,9 +49,14 @@ public class TelNet {
     private void addTelVerbindung(int x1, int y1, int x2, int y2) {
         TelKnoten t1 = new TelKnoten(x1, y1);
         TelKnoten t2 = new TelKnoten(x2, y2);
-        if (dist(t1, t2) <= lbg) {
-            TelVerbindung telVerbindung = new TelVerbindung(t1, t2, cost(t1, t2));
-            telQueue.add(telVerbindung);
+        int dist = dist(t1, t2);
+        if (dist <= lbg && dist < Integer.MAX_VALUE) {
+            TelVerbindung telVerbindung1 = new TelVerbindung(t1, t2, cost(t1, t2));
+            TelVerbindung telVerbindung2 = new TelVerbindung(t2, t1, cost(t2, t1));
+            if (!telQueue.contains(telVerbindung1)) {
+                telQueue.add(telVerbindung1);
+                telQueue.add(telVerbindung2);
+            }
         }
     }
 
@@ -56,8 +65,9 @@ public class TelNet {
     }
 
     private int cost(TelKnoten a, TelKnoten b) {
-        if (dist(a, b) <= lbg) return dist(a, b);
-        else return Integer.MAX_VALUE;
+        if (dist(a, b) <= lbg)
+            return dist(a, b);
+        return Integer.MAX_VALUE;
     }
 
     public boolean computeOptTelNet() {
@@ -76,27 +86,24 @@ public class TelNet {
         return !telQueue.isEmpty() || forest.size() == 1;
     }
 
-    double factorize(int xy, int xyMax) {
+    private double factorize(int xy, int xyMax) {
         return (1.0 / xyMax) * xy;
     }
 
     public void drawOptTelNet(int xMax, int yMax) throws IllegalStateException {
-        StdDraw.setXscale(0, xMax);
-        StdDraw.setYscale(0, yMax);
+        StdDraw.setCanvasSize(xMax, yMax);
 
         for (TelVerbindung v : optTelNet) {
-            System.out.println(v);
             double x1 = factorize(v.u.x, xMax);
-            double y1 = factorize(v.u.y, xMax);
+            double y1 = factorize(v.u.y, yMax);
             double x2 = factorize(v.v.x, xMax);
-            double y2 = factorize(v.v.y, xMax);
-
-            StdDraw.filledSquare(x1, y1, 0.1);
-            StdDraw.filledSquare(x2, y2, 0.1);
+            double y2 = factorize(v.v.y, yMax);
+            StdDraw.setPenRadius(0.001);
+            StdDraw.filledSquare(x1, y1, 0.001);
+            StdDraw.filledSquare(x2, y2, 0.001);
             StdDraw.setPenColor(Color.BLACK);
             StdDraw.line(x1, y1, x2, y1);
             StdDraw.line(x2, y1, x2, y2);
-
         }
     }
 
@@ -105,12 +112,11 @@ public class TelNet {
         for (int i = 0; i < n; i++) {
             int rx1 = random.nextInt(xMax);
             int ry1 = random.nextInt(yMax);
-            int rx2 = random.nextInt(xMax);
-            int ry2 = random.nextInt(yMax);
             addTelKnoten(rx1, ry1);
-            addTelKnoten(rx2, ry2);
-            addTelVerbindung(rx1, ry1, rx2, ry2);
-            addTelVerbindung(rx2, rx1, rx1, ry1);
+            for (TelKnoten knoten : telMap.keySet()) {
+                if (knoten.x != rx1 && knoten.y != ry1)
+                    addTelVerbindung(rx1, ry1, knoten.x, knoten.y);
+            }
         }
     }
 
