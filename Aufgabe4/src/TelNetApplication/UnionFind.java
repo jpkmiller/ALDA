@@ -111,6 +111,7 @@ public class UnionFind {
                 tree[s1]--;
             tree[s2] = s1;
         }
+        size--;
     }
 
     public Iterator<Integer> iterator() {

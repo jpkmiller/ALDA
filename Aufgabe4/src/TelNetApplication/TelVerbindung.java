@@ -10,4 +10,11 @@ public class TelVerbindung {
         this.u = u;
         this.v = v;
     }
+
+    @Override
+    public String toString() {
+        return "(c=" + c +
+                ", u=" + u +
+                ", v=" + v + ")";
+    }
 }

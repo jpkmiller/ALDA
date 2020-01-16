@@ -12,9 +12,9 @@ public class TelNet {
     private PriorityQueue<TelVerbindung> telQueue;
     private List<TelVerbindung> optTelNet;
     private int size;
-    public static int xMax = 800;
-    public static int yMax = 800;
-    public static int n = 500;
+    public static int xMax = 1000;
+    public static int yMax = 1000;
+    public static int n = 1000;
 
     public TelNet(int lbg) {
         telMap = new HashMap<>();
@@ -25,40 +25,38 @@ public class TelNet {
     }
 
     public static void main(String[] args) {
+//        test1();
+        test2();
+    }
+
+    private static void test2() {
         TelNet telNet = new TelNet(100);
         telNet.generateRandomTelNet(n, xMax, yMax);
         telNet.computeOptTelNet();
+        System.out.println("optTelNet = " + telNet.getOptTelNet());
+        System.out.println("Size = " + telNet.size);
+        System.out.println("optCost = " + telNet.getOptTelNetKosten());
         telNet.drawOptTelNet(xMax, yMax);
     }
 
-    /**
-     * Fügt einen neuen Telefonknoten mit Koordinate (x,y) dazu
-     *
-     * @param x Koordinate
-     * @param y Koordinate
-     * @return true, falls die Koordinate neu ist
-     */
-    private boolean addTelKnoten(int x, int y) {
-        TelKnoten knoten = new TelKnoten(x, y);
-        if (telMap.containsKey(knoten))
-            return false;
-        telMap.put(knoten, size++);
-        return true;
+    private static void test1() {
+        TelNet telNet = new TelNet(7);
+
+        telNet.addTelKnoten(1, 1);
+        telNet.addTelKnoten(3, 1);
+        telNet.addTelKnoten(4, 2);
+        telNet.addTelKnoten(3, 4);
+        telNet.addTelKnoten(2, 6);
+        telNet.addTelKnoten(4, 7);
+        telNet.addTelKnoten(7, 5);
+        telNet.computeOptTelNet();
+
+        System.out.println("optTelNet = " + telNet.getOptTelNet());
+        System.out.println("Size = " + telNet.size);
+        System.out.println("optCost = " + telNet.getOptTelNetKosten());
+        telNet.drawOptTelNet(7, 7);
     }
 
-    private void addTelVerbindung(int x1, int y1, int x2, int y2) {
-        TelKnoten t1 = new TelKnoten(x1, y1);
-        TelKnoten t2 = new TelKnoten(x2, y2);
-        int dist = dist(t1, t2);
-        if (dist <= lbg && dist < Integer.MAX_VALUE) {
-            TelVerbindung telVerbindung1 = new TelVerbindung(t1, t2, cost(t1, t2));
-            TelVerbindung telVerbindung2 = new TelVerbindung(t2, t1, cost(t2, t1));
-            if (!telQueue.contains(telVerbindung1)) {
-                telQueue.add(telVerbindung1);
-                telQueue.add(telVerbindung2);
-            }
-        }
-    }
 
     private int dist(TelKnoten a, TelKnoten b) {
         return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
@@ -90,21 +88,23 @@ public class TelNet {
         return (1.0 / xyMax) * xy;
     }
 
-    public void drawOptTelNet(int xMax, int yMax) throws IllegalStateException {
-        StdDraw.setCanvasSize(xMax, yMax);
-
-        for (TelVerbindung v : optTelNet) {
-            double x1 = factorize(v.u.x, xMax);
-            double y1 = factorize(v.u.y, yMax);
-            double x2 = factorize(v.v.x, xMax);
-            double y2 = factorize(v.v.y, yMax);
-            StdDraw.setPenRadius(0.001);
-            StdDraw.filledSquare(x1, y1, 0.001);
-            StdDraw.filledSquare(x2, y2, 0.001);
-            StdDraw.setPenColor(Color.BLACK);
-            StdDraw.line(x1, y1, x2, y1);
-            StdDraw.line(x2, y1, x2, y2);
+    /**
+     * Fügt einen neuen Telefonknoten mit Koordinate (x,y) dazu
+     *
+     * @param x Koordinate
+     * @param y Koordinate
+     * @return true, falls die Koordinate neu ist
+     */
+    private boolean addTelKnoten(int x, int y) {
+        TelKnoten knoten = new TelKnoten(x, y);
+        if (telMap.containsKey(knoten))
+            return false;
+        telMap.put(knoten, size++);
+        for (TelKnoten andereKnoten : telMap.keySet()) {
+            if (knoten.x != andereKnoten.x && knoten.y != andereKnoten.y)
+                addTelVerbindung(andereKnoten.x, andereKnoten.y, knoten.x, knoten.y);
         }
+        return true;
     }
 
     public void generateRandomTelNet(int n, int xMax, int yMax) {
@@ -113,11 +113,40 @@ public class TelNet {
             int rx1 = random.nextInt(xMax);
             int ry1 = random.nextInt(yMax);
             addTelKnoten(rx1, ry1);
-            for (TelKnoten knoten : telMap.keySet()) {
-                if (knoten.x != rx1 && knoten.y != ry1)
-                    addTelVerbindung(rx1, ry1, knoten.x, knoten.y);
+        }
+    }
+
+    private void addTelVerbindung(int x1, int y1, int x2, int y2) {
+        TelKnoten t1 = new TelKnoten(x1, y1);
+        TelKnoten t2 = new TelKnoten(x2, y2);
+        if (cost(t1, t1) <= lbg && cost(t1, t2) < Integer.MAX_VALUE) {
+            TelVerbindung telVerbindung1 = new TelVerbindung(t1, t2, cost(t1, t2));
+            TelVerbindung telVerbindung2 = new TelVerbindung(t2, t1, cost(t2, t1));
+            if (!telQueue.contains(telVerbindung1)) {
+                telQueue.add(telVerbindung1);
+                telQueue.add(telVerbindung2);
             }
         }
+    }
+
+    public void drawOptTelNet(int xMax, int yMax) throws IllegalStateException {
+        if (optTelNet.isEmpty()) throw new IllegalStateException();
+        StdDraw.setCanvasSize(xMax, yMax);
+
+        for (TelVerbindung v : optTelNet) {
+            double x1 = factorize(v.u.x, xMax);
+            double y1 = factorize(v.u.y, yMax);
+            double x2 = factorize(v.v.x, xMax);
+            double y2 = factorize(v.v.y, yMax);
+            StdDraw.setPenRadius(0.001);
+            StdDraw.setPenColor(Color.RED);
+            StdDraw.filledSquare(x1, y1, 0.001);
+            StdDraw.filledSquare(x2, y2, 0.001);
+            StdDraw.setPenColor(Color.BLACK);
+            StdDraw.line(x1, y1, x2, y1);
+            StdDraw.line(x2, y1, x2, y2);
+        }
+        StdDraw.show();
     }
 
     public List<TelVerbindung> getOptTelNet() throws IllegalStateException {
@@ -134,11 +163,8 @@ public class TelNet {
 
     @Override
     public String toString() {
-        return "TelNet{" +
-                "lbg=" + lbg +
-                ", telMap=" + telMap +
-                ", telQueue=" + telQueue +
-                ", optTelNet=" + optTelNet +
-                '}';
+        StringBuilder s = new StringBuilder();
+        telMap.forEach((x, y) -> s.append(y));
+        return s.toString();
     }
 }
